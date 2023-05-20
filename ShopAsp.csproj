@@ -19,6 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Areas\Identity\Pages\Accounts\" />
       <Folder Include="RazorComponents\" />
     </ItemGroup>
 
