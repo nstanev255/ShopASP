@@ -1,4 +1,5 @@
-﻿@using ShopASP.Views.Shared
+﻿@using ShopASP.RazorComponents
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,12 +37,12 @@
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Nintendo</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Coming Soon</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Pre-Order</a>
                     </li>
                 </ul>
 
                 <ul class="navbar-nav">
-                    
+                    @(await Html.RenderComponentAsync<AuthPopup>(RenderMode.ServerPrerendered))
                 </ul>
             </div>
         </div>
@@ -58,6 +59,8 @@
         &copy; 2023 - ShopASP - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
     </div>
 </footer>
+
+<script src="_framework/blazor.server.js"></script>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
