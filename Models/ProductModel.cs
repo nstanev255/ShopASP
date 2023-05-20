@@ -2,5 +2,5 @@ namespace ShopASP.Models;
 
 public class ProductModel
 {
-    public String Name { get; set; } = null;
+    public string Name { get; set; } = null;
 }
