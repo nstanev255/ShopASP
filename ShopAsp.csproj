@@ -19,8 +19,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Areas\Identity\Pages\Accounts\" />
-      <Folder Include="RazorComponents\" />
+      <_ContentIncludedByDefault Remove="Partial\_AuthPopupPartial.cshtml" />
+      <_ContentIncludedByDefault Remove="Partial\_CartPartial.cshtml" />
     </ItemGroup>
 
 </Project>
