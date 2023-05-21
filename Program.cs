@@ -1,9 +1,8 @@
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using ShopASP.Areas.Identity.Services;
 using ShopASP.Data;
+using ShopASP.Initializers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +22,20 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     options.Password.RequireLowercase = true;
     options.Password.RequireUppercase = true;
 }).AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.HttpOnly = true;
+
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+    options.LoginPath = "/Identity/Account/Login/";
+    options.LogoutPath = "/Identity/Account/Logout/";
+    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+    options.SlidingExpiration = true;
+});
+
+// Initialize the DI services. 
+DIIntializer.Initialize(builder);
 
 var app = builder.Build();
 
@@ -45,5 +58,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapAreaControllerRoute(name: "register", "Identity", pattern: "{controller=Account}/{action=Register}/");
 
 app.Run();
