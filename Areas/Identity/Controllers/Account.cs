@@ -32,11 +32,10 @@ public class Account : Controller
     [Route("[action]")]
     public async Task<IActionResult> Register([FromForm] Models.RegisterInput inputModel)
     {
-        _logger.LogInformation("here");
-        // if (!ModelState.IsValid)
-        // {
-        //     // return View(model: inputModel);
-        // }
+        if (!ModelState.IsValid)
+        {
+            return View(model: inputModel);
+        }
 
         try
         {
