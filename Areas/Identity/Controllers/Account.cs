@@ -27,8 +27,9 @@ public class Account : Controller
         return View(model);
     }
 
-    [AllowAnonymous]
     [HttpPost]
+    [AllowAnonymous]
+    [Route("[action]")]
     public async Task<IActionResult> Register([FromForm] Models.RegisterInput inputModel)
     {
         _logger.LogInformation("here");
