@@ -19,4 +19,6 @@ public interface IAuthenticationService
      */
     public Task LoginUser(LoginInput loginInput);
 
+    public Task LogoutUser();
+
 }
