@@ -15,6 +15,6 @@ public class Product : BaseNamed
     public Image FrontCover;
     public List<Image>? Screenshots;
     public ICollection<Category>? Categories { get; set; }
-    public ICollection<SystemRequirement>? MinimumSystemRequirements { get; set; }
-    public ICollection<SystemRequirement>? RecommendedSystemRequirements { get; set; }
+    public ICollection<ProductMinimalSystemRequirements>? MinimumSystemRequirements { get; set; }
+    public ICollection<ProductRecommendedSystemRequirements>? RecommendedSystemRequirements { get; set; }
 }

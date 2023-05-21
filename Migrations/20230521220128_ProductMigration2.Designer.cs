@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ShopASP.Data;
@@ -11,9 +12,11 @@ using ShopASP.Data;
 namespace ShopASP.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230521220128_ProductMigration2")]
+    partial class ProductMigration2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -341,52 +344,6 @@ namespace ShopASP.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("ShopASP.Models.Entity.ProductMinimalSystemRequirements", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("SystemRequirementId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("SystemRequirementId");
-
-                    b.ToTable("ProductMinimalSystemRequirements");
-                });
-
-            modelBuilder.Entity("ShopASP.Models.Entity.ProductRecommendedSystemRequirements", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("SystemRequirementId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("SystemRequirementId");
-
-                    b.ToTable("ProductRecommendedSystemRequirements");
-                });
-
             modelBuilder.Entity("ShopASP.Models.Entity.SystemRequirement", b =>
                 {
                     b.Property<int>("Id")
@@ -399,11 +356,21 @@ namespace ShopASP.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ProductId1")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("ProductId1");
 
                     b.ToTable("SystemRequirement");
                 });
@@ -496,42 +463,15 @@ namespace ShopASP.Migrations
                     b.Navigation("Platform");
                 });
 
-            modelBuilder.Entity("ShopASP.Models.Entity.ProductMinimalSystemRequirements", b =>
+            modelBuilder.Entity("ShopASP.Models.Entity.SystemRequirement", b =>
                 {
-                    b.HasOne("ShopASP.Models.Entity.Product", "Product")
+                    b.HasOne("ShopASP.Models.Entity.Product", null)
                         .WithMany("MinimumSystemRequirements")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProductId");
 
-                    b.HasOne("ShopASP.Models.Entity.SystemRequirement", "SystemRequirement")
-                        .WithMany()
-                        .HasForeignKey("SystemRequirementId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("SystemRequirement");
-                });
-
-            modelBuilder.Entity("ShopASP.Models.Entity.ProductRecommendedSystemRequirements", b =>
-                {
-                    b.HasOne("ShopASP.Models.Entity.Product", "Product")
+                    b.HasOne("ShopASP.Models.Entity.Product", null)
                         .WithMany("RecommendedSystemRequirements")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ShopASP.Models.Entity.SystemRequirement", "SystemRequirement")
-                        .WithMany()
-                        .HasForeignKey("SystemRequirementId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("SystemRequirement");
+                        .HasForeignKey("ProductId1");
                 });
 
             modelBuilder.Entity("ShopASP.Models.Entity.Product", b =>
