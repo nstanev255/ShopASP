@@ -17,6 +17,6 @@ public interface IAuthenticationService
      * Login a user.
      *
      */
-    public void LoginUser(IdentityUser identityUser);
+    public Task LoginUser(LoginInput loginInput);
 
 }

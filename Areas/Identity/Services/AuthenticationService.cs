@@ -45,15 +45,14 @@ public class AuthenticationService : IAuthenticationService
         return user;
     }
 
-    public async void LoginUser(IdentityUser identityUser)
+    public async Task LoginUser(LoginInput loginInput)
     {
-        var canSignIn = await _signInManager.CanSignInAsync(identityUser);
-        if (!canSignIn)
+        var result = await _signInManager.PasswordSignInAsync(loginInput.Email, loginInput.Password,
+            loginInput.RememberMe, lockoutOnFailure: false);
+        if (!result.Succeeded)
         {
-            throw new System.Exception("The user cannot sign in");
+            throw new IdentityException("Something went wrong, try logging in again..");
         }
-
-        await _signInManager.SignInAsync(identityUser, false);
     }
 
 }
