@@ -12,13 +12,13 @@ public class Account : Controller
 {
     private readonly IAuthenticationService _authenticationService;
     private readonly ILogger<Account> _logger;
-    
+
     public Account(IAuthenticationService authenticationService, ILogger<Account> logger)
     {
         _authenticationService = authenticationService;
         _logger = logger;
     }
-    
+
     [Route("[action]")]
     [AllowAnonymous]
     public IActionResult Register()
@@ -40,9 +40,7 @@ public class Account : Controller
         try
         {
             await _authenticationService.Register(inputModel);
-            
-            var url= Url.Content("~/");
-            return LocalRedirect(url);
+            return RedirectToAction("Index", "Home");
         }
         catch (IdentityException exception)
         {
@@ -50,7 +48,7 @@ public class Account : Controller
             {
                 ModelState.AddModelError("", error.Description);
             }
-            
+
             return View(model: inputModel);
         }
     }
@@ -76,13 +74,19 @@ public class Account : Controller
         try
         {
             await _authenticationService.LoginUser(loginInput);
-            var url = Url.Content("~/");
-            return LocalRedirect(url);
+            return RedirectToAction("Index", "Home");
         }
         catch (IdentityException exception)
         {
             ModelState.AddModelError(string.Empty, exception.Message);
             return View(model: loginInput);
         }
+    }
+
+    [Route("[action]")]
+    public async Task<IActionResult> Logout()
+    {
+        await _authenticationService.LogoutUser();
+        return RedirectToAction("Index", "Home", new { area = "" });
     }
 }
