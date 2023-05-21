@@ -12,5 +12,7 @@ public class Product : BaseNamed
     public Platform? Platform { get; set; }
     public Developer? Developer { get; set; }
     public DateOnly ReleaseDate { get; set; }
+    public Image FrontCover;
+    public List<Image> Screenshots;
     public ICollection<Category>? Categories { get; set; }
 }
