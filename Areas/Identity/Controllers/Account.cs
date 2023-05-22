@@ -7,7 +7,7 @@ using ShopASP.Areas.Identity.Services;
 namespace ShopASP.Areas.Identity.Controllers;
 
 [Area("Identity")]
-[Route("identity/[controller]")]
+[Route("identity/account")]
 public class Account : Controller
 {
     private readonly IAuthenticationService _authenticationService;
@@ -19,7 +19,7 @@ public class Account : Controller
         _logger = logger;
     }
 
-    [Route("[action]")]
+    [Route("register")]
     [AllowAnonymous]
     public IActionResult Register()
     {
@@ -29,7 +29,7 @@ public class Account : Controller
 
     [HttpPost]
     [AllowAnonymous]
-    [Route("[action]")]
+    [Route("register")]
     public async Task<IActionResult> Register([FromForm] RegisterInput inputModel)
     {
         if (!ModelState.IsValid)
@@ -54,7 +54,7 @@ public class Account : Controller
     }
 
     [AllowAnonymous]
-    [Route("[action]")]
+    [Route("login")]
     public IActionResult Login()
     {
         var model = new LoginInput();
@@ -63,7 +63,7 @@ public class Account : Controller
 
     [AllowAnonymous]
     [HttpPost]
-    [Route("[action]")]
+    [Route("login")]
     public async Task<IActionResult> Login(LoginInput loginInput)
     {
         if (!ModelState.IsValid)
@@ -83,7 +83,7 @@ public class Account : Controller
         }
     }
 
-    [Route("[action]")]
+    [Route("logout")]
     public async Task<IActionResult> Logout()
     {
         await _authenticationService.LogoutUser();
