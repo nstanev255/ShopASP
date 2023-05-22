@@ -9,5 +9,7 @@ public static class DIIntializer
     {
         builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
         builder.Services.AddScoped<IProductService, ProductService>();
+        builder.Services.AddScoped<IGenreService, GenreService>();
+        builder.Services.AddScoped<IPlatformService, PlatformService>();
     }
 }
