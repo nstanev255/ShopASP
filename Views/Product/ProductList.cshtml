@@ -1,9 +1,19 @@
-@page
-
+@using ShopASP.Constants
 @model ShopASP.Models.ProductListViewModel
 
 <div class="container">
-    <div>
-        @Model.
+    <div class="text-center">
+        <h1> @Constants.Messages["Product_Listing_" + @ViewContext.RouteData.Values["category"]?.ToString()?.ToUpper() + "_Title"] @Constants.Messages["Games"] </h1>
+        <p> @Constants.Messages["Product_Listing_" + @ViewContext.RouteData.Values["category"]?.ToString()?.ToUpper() + "_Description"] </p>
+    </div>
+    <div class="col">
+        <div class="card" style="width: 18rem">
+            <img src="..." class="card-img-top" alt="..."/>
+            <div class="card-body">
+                <h5 class="card-title"> Card Title </h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+        </div>
     </div>
 </div>
