@@ -1,5 +1,6 @@
 {
   "Product_Listing_PC_Title": "PC",
   "Product_Listing_PC_Description": "The uncoordinated nature of the PC game market make precisely assessing its size difficult.[1] PC remains the most important gaming platform with 60% of developers being most interested in developing a game for the platform and 66% of developers currently developing a game for PC.",
-  "Games" : "Games"
+  "Games" : "Games",
+  "Resource_Not_Found": "Could not find the resources."
 }
