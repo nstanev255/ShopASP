@@ -7,8 +7,14 @@ namespace ShopASP.Controllers;
 
 public class ProductController : Controller
 {
+    private ILogger<ProductController> _logger;
+    public ProductController(ILogger<ProductController> logger)
+    {
+        _logger = logger;
+    }
+    
     [AllowAnonymous]
-    [HttpGet("{category?}")]
+    [HttpGet("{category}")]
     public async Task<IActionResult> ProductList(string category)
     {
         return View();
