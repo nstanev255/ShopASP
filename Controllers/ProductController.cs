@@ -33,13 +33,9 @@ public class ProductController : Controller
             var products = _productService.FindAllByCategory(parsedCategory);
             var allGenres = _genreService.FindAll();
             var allPlatforms = _platformService.FindAll();
-            
-            //TODO: Figure out if its better to send the whole messages to the views.
-            //TODO: Figure out something about the Constants.Constants calls, maybe declare it somehow as a top-level static variable ?
-            string title = Constants.Constants.Messages["Product_Listing_" + category.ToUpper() + "_Title"];
-            string description = Constants.Constants.Messages["Product_Listing_" + category.ToUpper() + "_Description"];
 
-            var model = new ProductListViewModel { Products = products, Genres = allGenres, Platforms = allPlatforms };
+            var model = new ProductListViewModel { Products = products, Genres = allGenres, 
+                Platforms = allPlatforms};
             return View(model: model);
         }
 
