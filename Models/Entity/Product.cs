@@ -14,7 +14,8 @@ public class Product : BaseNamed
     public DateOnly? ReleaseDate { get; set; }
     public Image FrontCover;
     public List<Image>? Screenshots;
-    public ICollection<Category>? Categories { get; set; }
+    public Category Category { get; set; }
+    public ICollection<Genre>? Genres { get; set; }
     public ICollection<ProductMinimalSystemRequirements>? MinimumSystemRequirements { get; set; }
     public ICollection<ProductRecommendedSystemRequirements>? RecommendedSystemRequirements { get; set; }
 }
