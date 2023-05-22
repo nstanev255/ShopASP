@@ -60,5 +60,6 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapAreaControllerRoute(name: "register", "Identity", pattern: "{controller=Account}/{action=Register}/");
+app.MapControllerRoute(name: "product", pattern: "{category}");
 
 app.Run();
