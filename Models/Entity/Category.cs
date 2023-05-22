@@ -1,6 +1,6 @@
 namespace ShopASP.Models.Entity;
 
-public class Category : BaseNamed
+public class Category : Base
 {
-    
+    public CategoryType Type { get; set; }
 }
