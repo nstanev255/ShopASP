@@ -1,11 +1,19 @@
+using Microsoft.EntityFrameworkCore;
+using ShopASP.Data;
 using ShopASP.Models.Entity;
 
 namespace ShopASP.Services;
 
 public class GenreService : IGenreService
 {
+    private readonly DbSet<Genre> _genresDao;
+    public GenreService(ApplicationDbContext dbContext)
+    {
+        _genresDao = dbContext.Genres; 
+    }
+    
     public List<Genre> FindAll()
     {
-        throw new NotImplementedException();
+        return _genresDao.ToList();
     }
 }
