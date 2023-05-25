@@ -62,4 +62,18 @@ app.MapControllerRoute(
 app.MapAreaControllerRoute(name: "register", "Identity", pattern: "{controller=Account}/{action=Register}/");
 app.MapControllerRoute(name: "product", pattern: "{category}");
 
+using (var seviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+{
+    try
+    {
+        ApplicationDbContext context = seviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        DatabaseInitializer.SeedData(context).Wait();
+    }
+    catch (Exception e)
+    {
+        
+    }
+}
+
+
 app.Run();
