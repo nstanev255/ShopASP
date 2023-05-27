@@ -10,7 +10,6 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser, IdentityRole
     public DbSet<Product> Products { get; set; }
     public DbSet<Genre> Genres { get; set; }
     public DbSet<Platform> Platforms { get; set; }
-
     public DbSet<Category> Categories { get; set; }
 
     public ApplicationDbContext(DbContextOptions options) : base(options)

@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using ShopASP.Api;
 using ShopASP.Api.Model;
 using ShopASP.Models.Entity;
@@ -10,11 +11,11 @@ public class DatabaseInitializer
     {
         var api = new GdbApi();
         List<GenreModel>? genreModels = await api.GenreModels();
-        var genreEntities = applicationDbContext.Genres.ToList();
-        Console.WriteLine("Genres any" + genreEntities.Any());
-        if (genreModels != null && genreEntities.Any())
-        {
-            // Add genres to the databse
+        var genreEntities = applicationDbContext.Genres;
+        Console.WriteLine("Any " + genreEntities.Any());
+        if (genreModels != null && !genreEntities.Any())
+        { 
+            // Add genres to the database
             foreach (var genre in genreModels)
             {
                 Genre genreEntity = new Genre() { Id = genre.Id, Name = genre.Name };
@@ -25,13 +26,13 @@ public class DatabaseInitializer
             await applicationDbContext.Genres.AddRangeAsync(genreEntities);
             await applicationDbContext.SaveChangesAsync();
         }
-
+        Console.WriteLine("outside cateogies");
+        
         var dbCategories = applicationDbContext.Categories;
-
-
-        // Fill up categories
-        if (dbCategories.Any())
+        // Fill up categories OR Platforms for the api.
+        if (!dbCategories.Any())
         {
+            Console.WriteLine("here");
             List<Category> categories = new List<Category>();
 
             // Add PC
@@ -57,6 +58,18 @@ public class DatabaseInitializer
             // Save to the database.
             await applicationDbContext.Categories.AddRangeAsync(categories);
             await applicationDbContext.SaveChangesAsync();
+        }
+
+        Console.WriteLine("here");
+        // Fill up the games, with the needed images, platforms and developers.
+        DbSet<Product> products = applicationDbContext.Products;
+        List<GameModel>? games = await api.Games(0);
+        if (games != null && !products.Any())
+        {
+            foreach (var game in games)
+            {
+                Console.WriteLine("Game " + game);
+            }
         }
     }
 }
