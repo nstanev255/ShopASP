@@ -231,7 +231,7 @@ namespace ShopASP.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Category");
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("ShopASP.Models.Entity.Developer", b =>
@@ -263,12 +263,7 @@ namespace ShopASP.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
 
                     b.ToTable("Genres");
                 });
@@ -360,6 +355,29 @@ namespace ShopASP.Migrations
                     b.HasIndex("PlatformId");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("ShopASP.Models.Entity.ProductGenre", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("GenreId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GenreId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductGenre");
                 });
 
             modelBuilder.Entity("ShopASP.Models.Entity.ProductMinimalSystemRequirements", b =>
@@ -480,13 +498,6 @@ namespace ShopASP.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ShopASP.Models.Entity.Genre", b =>
-                {
-                    b.HasOne("ShopASP.Models.Entity.Product", null)
-                        .WithMany("Genres")
-                        .HasForeignKey("ProductId");
-                });
-
             modelBuilder.Entity("ShopASP.Models.Entity.Platform", b =>
                 {
                     b.HasOne("ShopASP.Models.Entity.Image", "Logo")
@@ -523,6 +534,25 @@ namespace ShopASP.Migrations
                     b.Navigation("Developer");
 
                     b.Navigation("Platform");
+                });
+
+            modelBuilder.Entity("ShopASP.Models.Entity.ProductGenre", b =>
+                {
+                    b.HasOne("ShopASP.Models.Entity.Genre", "Genre")
+                        .WithMany()
+                        .HasForeignKey("GenreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ShopASP.Models.Entity.Product", "Product")
+                        .WithMany("Genres")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Genre");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("ShopASP.Models.Entity.ProductMinimalSystemRequirements", b =>
