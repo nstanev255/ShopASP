@@ -11,12 +11,13 @@ public class DatabaseInitializer
         var api = new GdbApi();
         List<GenreModel>? genreModels = await api.GenreModels();
         var genreEntities = applicationDbContext.Genres.ToList();
-        if (genreModels != null && genreEntities.Count == 0)
+        Console.WriteLine("Genres any" + genreEntities.Any());
+        if (genreModels != null && genreEntities.Any())
         {
             // Add genres to the databse
             foreach (var genre in genreModels)
             {
-                Genre genreEntity = new Genre() { Id = genre.Id, Name = genre.Name};
+                Genre genreEntity = new Genre() { Id = genre.Id, Name = genre.Name };
                 genreEntities.Add(genreEntity);
             }
         }
@@ -25,6 +26,25 @@ public class DatabaseInitializer
         await applicationDbContext.Genres.AddRangeAsync(genreEntities);
         await applicationDbContext.SaveChangesAsync();
 
+        var dbCategories = applicationDbContext.Categories;
 
+        // Fill up categories
+        // if (!dbCategories.Any())
+        // {
+        //     List<Category> categories = new List<Category>();
+        //
+        //     // Add PC
+        //     var pcCategory = new Category { Id = 6, Type = CategoryType.PC };
+        //     categories.Add(pcCategory);
+        //
+        //     // Add Playstation 4
+        //     var ps4Category = new Category { Id = 48, Type = CategoryType.PLAYSTATION_4 };
+        //     categories.Add(ps4Category);
+        //
+        //     var ps5Category = new Category { Id = 167, Type = CategoryType.PLAYSTATION_5 };
+        //     categories.Add(ps5Category);
+        //     
+        //     
+        // }
     }
 }
