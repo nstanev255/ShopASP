@@ -11,6 +11,9 @@ public class GdbApi
 
     private readonly string _gamesUrl = "/games";
     private readonly string _genresUrl = "/genres";
+    private readonly string _invlovedCompaniesUrl = "/involved_companies";
+    private readonly string _companiesUrl = "/companies";
+    
     private readonly HttpClient _httpClient;
 
     public GdbApi()
@@ -47,6 +50,32 @@ public class GdbApi
         var responseString = await response.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<List<GameModel>>(responseString);
 
+    }
+
+    public async Task<List<InvolvedCompanyModel>?> InvolvedCompaniesByGameID(int gameId)
+    {
+        var content = new StringContent($"fields *; limit 500; where game == {gameId};");
+        var fullUrl = $"{_apiUrl}{_invlovedCompaniesUrl}";
+        var response = await _httpClient.PostAsync(fullUrl, content);
+
+        Console.WriteLine("Response " + response.StatusCode);
+        response.EnsureSuccessStatusCode();
+
+        var responseString = await response.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<List<InvolvedCompanyModel>>(responseString);
+    }
+
+    public async Task<List<CompanyModel>?> CompanyInfo(int company)
+    {
+        var content = new StringContent($"fields *; limit 500; where id == {company};");
+        var fullUrl = $"{_apiUrl}{_companiesUrl}";
+        var response = await _httpClient.PostAsync(fullUrl, content);
+
+        Console.WriteLine("Response companyInfo " + response.StatusCode);
+        response.EnsureSuccessStatusCode();
+
+        var responseString = await response.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<List<CompanyModel>>(responseString);
     }
 
 }
