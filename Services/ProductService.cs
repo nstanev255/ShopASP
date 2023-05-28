@@ -15,7 +15,7 @@ public class ProductService : IProductService
 
     public List<Product> FindAllByCategory(CategoryType categoryType)
     {
-        return _productDao.Where(p => p.Category.Type == categoryType).ToList();
+        return _productDao.Where(p => p.Categories.Any(cp => cp.Category.Type == categoryType)).ToList();
     }
 
 }
