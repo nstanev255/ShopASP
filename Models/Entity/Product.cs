@@ -10,7 +10,7 @@ public class Product : BaseNamed
     public decimal Price { get; set; }
     public int Units { get; set; }
     public Platform Platform { get; set; }
-    public Developer Developer { get; set; }
+    public Developer? Developer { get; set; }
     public DateOnly? ReleaseDate { get; set; }
     public Image FrontCover;
     public List<Image>? Screenshots;

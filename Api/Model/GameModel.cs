@@ -27,7 +27,7 @@ public class GameModel
     public List<int>? InvolvedCompanies { get; set; }
     
     [JsonProperty("name")]
-    public string? Name { get; set; }
+    public string Name { get; set; }
     
     [JsonProperty("platforms")]
     public List<int>? Platforms { get; set; }
@@ -39,7 +39,7 @@ public class GameModel
     public List<long>? Screenshots { get; set; }
     
     [JsonProperty("summary")]
-    public string? Summary { get; set; }
+    public string Summary { get; set; }
 
     public override string ToString()
     {

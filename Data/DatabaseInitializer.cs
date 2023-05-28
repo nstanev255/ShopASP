@@ -68,11 +68,14 @@ public class DatabaseInitializer
             {
                 Product product = new Product();
 
+                List<InvolvedCompanyModel>? involvedCompanies = await api.InvolvedCompaniesByGameID(game.Id);
+
+                product.Id = game.Id;
                 product.Name = game.Name;
                 product.Description = game.Summary;
                 product.ReleaseDate = DateOnly.FromDateTime(UnixTimeStampToDateTime(game.FirstReleaseDate));
                 product.Categories = HandleCategories(game.Platforms, product, categoryService);
-                product.Developer = HandleDeveloper(game.InvolvedCompanies);
+                product.Developer = await HandleDeveloper(involvedCompanies, developerService, api);
 
                 await applicationDbContext.AddAsync(product);
             }
@@ -101,16 +104,34 @@ public class DatabaseInitializer
         return relationships;
     }
 
-    private static Developer HandleDeveloper(List<int>? gameInvolvedCompanies)
+    private static async Task<Developer?> HandleDeveloper(List<InvolvedCompanyModel>? involvedCompanies,
+        IDeveloperService developerService, GdbApi api)
     {
-        Developer developer = new Developer();
-        if (gameInvolvedCompanies == null || !gameInvolvedCompanies.Any())
+        Developer? developer = null;
+        if (involvedCompanies == null || !involvedCompanies.Any())
         {
             return developer;
         }
 
-        foreach (var company in gameInvolvedCompanies)
+        foreach (var company in involvedCompanies)
         {
+            // If the company is developer
+            if (company.developer)
+            {
+                // We check if the said developer already exists
+                developer = await developerService.FindOneById(company.company);
+                // If the developer does not exists, we will just create it here.
+                if (developer == null)
+                {
+                    // We get the actual company info.
+                    var companyInfo = await api.CompanyInfo(company.company);
+                    if (companyInfo != null && companyInfo.Any())
+                    {
+                        developer = new Developer { Id = companyInfo[0].Id, Name = companyInfo[0].Name };
+                    }
+
+                }
+            }
         }
 
         return developer;
