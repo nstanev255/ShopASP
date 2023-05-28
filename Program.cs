@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using ShopASP.Areas.Identity.Services;
 using ShopASP.Data;
 using ShopASP.Initializers;
+using ShopASP.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,7 +67,11 @@ using (var seviceScope = app.Services.GetRequiredService<IServiceScopeFactory>()
     try
     {
         ApplicationDbContext context = seviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        DatabaseInitializer.SeedData(context).Wait();
+        GenreService genreService = seviceScope.ServiceProvider.GetRequiredService<GenreService>();
+        CategoryService categoryService = seviceScope.ServiceProvider.GetRequiredService<CategoryService>();
+        DeveloperService developerService = seviceScope.ServiceProvider.GetRequiredService<DeveloperService>();
+        
+        DatabaseInitializer.SeedData(context, genreService, categoryService, developerService).Wait();
     }
     catch (Exception e)
     {
