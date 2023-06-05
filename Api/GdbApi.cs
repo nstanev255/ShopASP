@@ -30,7 +30,6 @@ public class GdbApi
         var content = new StringContent("fields *; limit 500;");
         var fullUrl = $"{_apiUrl}{_genresUrl}";
         var response = await _httpClient.PostAsync(fullUrl, content);
-        Console.WriteLine("Genre Response " + response.StatusCode);
         response.EnsureSuccessStatusCode();
 
         var responseString = await response.Content.ReadAsStringAsync();

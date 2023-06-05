@@ -4,5 +4,5 @@ namespace ShopASP.Services;
 
 public interface IProductService
 {
-    public List<Product> FindAllByCategory(CategoryType categoryType);
+    public List<Product> FindAllByCategory(CategoryType categoryType, int page);
 }

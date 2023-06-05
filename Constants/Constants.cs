@@ -5,6 +5,7 @@ namespace ShopASP.Constants;
 public static class Constants
 {
     public static Dictionary<string, string> Messages = LoadMessages();
+    public static readonly int ItemsPerPage = 12;
 
     static Dictionary<string, string> LoadMessages()
     {

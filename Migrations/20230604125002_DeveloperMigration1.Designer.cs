@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ShopASP.Data;
@@ -11,9 +12,11 @@ using ShopASP.Data;
 namespace ShopASP.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230604125002_DeveloperMigration1")]
+    partial class DeveloperMigration1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -303,18 +306,35 @@ namespace ShopASP.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
+                    b.ToTable("Image");
+                });
 
-                    b.ToTable("Images");
+            modelBuilder.Entity("ShopASP.Models.Entity.Platform", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("LogoId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LogoId");
+
+                    b.ToTable("Platforms");
                 });
 
             modelBuilder.Entity("ShopASP.Models.Entity.Product", b =>
@@ -327,18 +347,18 @@ namespace ShopASP.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(3000)
-                        .HasColumnType("character varying(3000)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
 
                     b.Property<int?>("DeveloperId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("FrontCoverId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("PlatformId")
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
@@ -353,7 +373,7 @@ namespace ShopASP.Migrations
 
                     b.HasIndex("DeveloperId");
 
-                    b.HasIndex("FrontCoverId");
+                    b.HasIndex("PlatformId");
 
                     b.ToTable("Products");
                 });
@@ -518,26 +538,32 @@ namespace ShopASP.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("ShopASP.Models.Entity.Image", b =>
+            modelBuilder.Entity("ShopASP.Models.Entity.Platform", b =>
                 {
-                    b.HasOne("ShopASP.Models.Entity.Product", null)
-                        .WithMany("Screenshots")
-                        .HasForeignKey("ProductId");
+                    b.HasOne("ShopASP.Models.Entity.Image", "Logo")
+                        .WithMany()
+                        .HasForeignKey("LogoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Logo");
                 });
 
             modelBuilder.Entity("ShopASP.Models.Entity.Product", b =>
                 {
                     b.HasOne("ShopASP.Models.Entity.Developer", "Developer")
-                        .WithMany("Products")
+                        .WithMany()
                         .HasForeignKey("DeveloperId");
 
-                    b.HasOne("ShopASP.Models.Entity.Image", "FrontCover")
+                    b.HasOne("ShopASP.Models.Entity.Platform", "Platform")
                         .WithMany()
-                        .HasForeignKey("FrontCoverId");
+                        .HasForeignKey("PlatformId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Developer");
 
-                    b.Navigation("FrontCover");
+                    b.Navigation("Platform");
                 });
 
             modelBuilder.Entity("ShopASP.Models.Entity.ProductGenre", b =>
@@ -597,11 +623,6 @@ namespace ShopASP.Migrations
                     b.Navigation("SystemRequirement");
                 });
 
-            modelBuilder.Entity("ShopASP.Models.Entity.Developer", b =>
-                {
-                    b.Navigation("Products");
-                });
-
             modelBuilder.Entity("ShopASP.Models.Entity.Product", b =>
                 {
                     b.Navigation("Categories");
@@ -611,8 +632,6 @@ namespace ShopASP.Migrations
                     b.Navigation("MinimumSystemRequirements");
 
                     b.Navigation("RecommendedSystemRequirements");
-
-                    b.Navigation("Screenshots");
                 });
 #pragma warning restore 612, 618
         }

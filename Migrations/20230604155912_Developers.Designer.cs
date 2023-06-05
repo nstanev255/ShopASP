@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ShopASP.Data;
@@ -11,9 +12,11 @@ using ShopASP.Data;
 namespace ShopASP.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230604155912_Developers")]
+    partial class Developers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -303,16 +306,11 @@ namespace ShopASP.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
 
                     b.ToTable("Images");
                 });
@@ -333,9 +331,6 @@ namespace ShopASP.Migrations
                     b.Property<int?>("DeveloperId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("FrontCoverId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -352,8 +347,6 @@ namespace ShopASP.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DeveloperId");
-
-                    b.HasIndex("FrontCoverId");
 
                     b.ToTable("Products");
                 });
@@ -518,26 +511,13 @@ namespace ShopASP.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("ShopASP.Models.Entity.Image", b =>
-                {
-                    b.HasOne("ShopASP.Models.Entity.Product", null)
-                        .WithMany("Screenshots")
-                        .HasForeignKey("ProductId");
-                });
-
             modelBuilder.Entity("ShopASP.Models.Entity.Product", b =>
                 {
                     b.HasOne("ShopASP.Models.Entity.Developer", "Developer")
                         .WithMany("Products")
                         .HasForeignKey("DeveloperId");
 
-                    b.HasOne("ShopASP.Models.Entity.Image", "FrontCover")
-                        .WithMany()
-                        .HasForeignKey("FrontCoverId");
-
                     b.Navigation("Developer");
-
-                    b.Navigation("FrontCover");
                 });
 
             modelBuilder.Entity("ShopASP.Models.Entity.ProductGenre", b =>
@@ -611,8 +591,6 @@ namespace ShopASP.Migrations
                     b.Navigation("MinimumSystemRequirements");
 
                     b.Navigation("RecommendedSystemRequirements");
-
-                    b.Navigation("Screenshots");
                 });
 #pragma warning restore 612, 618
         }

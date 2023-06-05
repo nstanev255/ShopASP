@@ -22,13 +22,13 @@ public class ProductController : Controller
 
     [AllowAnonymous]
     [HttpGet("{category}")]
-    public async Task<IActionResult> ProductList(string category)
+    public async Task<IActionResult> ProductList(string category, int page = 1)
     {
         CategoryType parsedCategory;
 
         if (Enum.TryParse(category.ToUpper(), out parsedCategory))
         {
-            var products = _productService.FindAllByCategory(parsedCategory);
+            var products = _productService.FindAllByCategory(parsedCategory, page);
             var allGenres = _genreService.FindAll();
 
             var model = new ProductListViewModel { Products = products, Genres = allGenres};

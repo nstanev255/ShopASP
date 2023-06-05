@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ShopASP.Data;
 using ShopASP.Models.Entity;
+using ShopASP.Utils;
 
 namespace ShopASP.Services;
 
@@ -13,9 +14,17 @@ public class ProductService : IProductService
         _productDao = context.Products;
     }
 
-    public List<Product> FindAllByCategory(CategoryType categoryType)
+    public List<Product> FindAllByCategory(CategoryType categoryType, int page)
     {
-        return _productDao.Where(p => p.Categories.Any(cp => cp.Category.Type == categoryType)).ToList();
+        int offset = PaginationUtils.CalculateOffset(page);
+        Console.WriteLine("Offset " + offset);
+
+        return _productDao
+            .Where(p => p.Categories.Any(cp => cp.Category.Type == categoryType))
+            .Include(p => (p as Product).FrontCover)
+            .Skip(offset)
+            .Take(Constants.Constants.ItemsPerPage)
+            .ToList();
     }
 
 }

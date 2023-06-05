@@ -11,8 +11,9 @@ public class Product : BaseNamed
     public int Units { get; set; }
     public Developer? Developer { get; set; }
     public DateOnly? ReleaseDate { get; set; }
-    public Image? FrontCover;
-    public List<Image>? Screenshots;
+    public Image? FrontCover { get; set; }
+
+    public List<Image>? Screenshots { get; set; }
     public List<CategoryProduct> Categories { get; set; }
     public ICollection<ProductGenre>? Genres { get; set; }
     public ICollection<ProductMinimalSystemRequirements>? MinimumSystemRequirements { get; set; }
