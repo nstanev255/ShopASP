@@ -62,7 +62,7 @@ public class DatabaseInitializer
         // Fill up the games, with the needed images, platforms and developers.
         DbSet<Product> products = applicationDbContext.Products;
         List<GameModel>? games = await api.Games(0);
-        if (games != null)
+        if (games != null && !products.Any())
         {
             foreach (var game in games)
             {
@@ -91,8 +91,6 @@ public class DatabaseInitializer
                     // If there are no developers, we don't need the game for now.
                     continue;
                 }
-                Console.WriteLine("developer name " + developer.Name);
-
                 var cover = await HandleCover(game.Cover, api, applicationDbContext.Images);
 
                 var genres = await HandleGenres(game.Genres, genreService, product);
@@ -128,7 +126,7 @@ public class DatabaseInitializer
         if (cover != null)
         {
             image = await dao.FirstOrDefaultAsync(i => i.Id == cover.Id);
-            if (image != null)
+            if (image == null)
             {
                 image = new Image();
                 image.Id = cover.Id;
@@ -167,11 +165,9 @@ public class DatabaseInitializer
     private static List<CategoryProduct> HandleCategories(List<int>? categoryIds, Product product,
         ICategoryService categoryService)
     {
-        Console.WriteLine("inside handle categories.");
         var relationships = new List<CategoryProduct>();
         if (categoryIds == null || !categoryIds.Any())
         {
-            Console.WriteLine("No categories found.");
             return relationships;
         }
 
@@ -208,13 +204,10 @@ public class DatabaseInitializer
                 Console.WriteLine(developer);
                 if (developer == null)
                 {
-                    Console.WriteLine("create new developer");
-                    Console.WriteLine("id " + company.company);
                     // We get the actual company info.
                     var companyInfo = await api.CompanyInfo(company.company);
                     if (companyInfo != null)
                     {
-                        Console.WriteLine("company info response " + companyInfo.Id);
                         developer = new Developer { Id = companyInfo.Id, Name = companyInfo.Name };
                         await dao.AddAsync(developer);
                         await dbContext.SaveChangesAsync();
