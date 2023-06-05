@@ -16,4 +16,9 @@ public class GenreService : IGenreService
     {
         return _genresDao.ToList();
     }
+
+    public async Task<Genre?> FindOneById(int id)
+    {
+        return await _genresDao.FirstAsync();
+    }
 }

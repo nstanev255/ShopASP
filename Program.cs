@@ -67,15 +67,15 @@ using (var seviceScope = app.Services.GetRequiredService<IServiceScopeFactory>()
     try
     {
         ApplicationDbContext context = seviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        GenreService genreService = seviceScope.ServiceProvider.GetRequiredService<GenreService>();
-        CategoryService categoryService = seviceScope.ServiceProvider.GetRequiredService<CategoryService>();
-        DeveloperService developerService = seviceScope.ServiceProvider.GetRequiredService<DeveloperService>();
+        IGenreService genreService = seviceScope.ServiceProvider.GetRequiredService<IGenreService>();
+        ICategoryService categoryService = seviceScope.ServiceProvider.GetRequiredService<ICategoryService>();
+        IDeveloperService developerService = seviceScope.ServiceProvider.GetRequiredService<IDeveloperService>();
         
         DatabaseInitializer.SeedData(context, genreService, categoryService, developerService).Wait();
     }
     catch (Exception e)
     {
-        
+        Console.WriteLine(e.Message);
     }
 }
 
