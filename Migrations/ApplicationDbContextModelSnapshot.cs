@@ -234,6 +234,29 @@ namespace ShopASP.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("ShopASP.Models.Entity.CategoryProduct", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("CategoryProduct");
+                });
+
             modelBuilder.Entity("ShopASP.Models.Entity.Developer", b =>
                 {
                     b.Property<int>("Id")
@@ -248,7 +271,7 @@ namespace ShopASP.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Developer");
+                    b.ToTable("Developers");
                 });
 
             modelBuilder.Entity("ShopASP.Models.Entity.Genre", b =>
@@ -286,29 +309,7 @@ namespace ShopASP.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Image");
-                });
-
-            modelBuilder.Entity("ShopASP.Models.Entity.Platform", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("LogoId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LogoId");
-
-                    b.ToTable("Platforms");
+                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("ShopASP.Models.Entity.Product", b =>
@@ -319,23 +320,17 @@ namespace ShopASP.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasMaxLength(3000)
+                        .HasColumnType("character varying(3000)");
 
-                    b.Property<int>("DeveloperId")
+                    b.Property<int?>("DeveloperId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int>("PlatformId")
-                        .HasColumnType("integer");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
@@ -348,11 +343,7 @@ namespace ShopASP.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
                     b.HasIndex("DeveloperId");
-
-                    b.HasIndex("PlatformId");
 
                     b.ToTable("Products");
                 });
@@ -498,18 +489,7 @@ namespace ShopASP.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ShopASP.Models.Entity.Platform", b =>
-                {
-                    b.HasOne("ShopASP.Models.Entity.Image", "Logo")
-                        .WithMany()
-                        .HasForeignKey("LogoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Logo");
-                });
-
-            modelBuilder.Entity("ShopASP.Models.Entity.Product", b =>
+            modelBuilder.Entity("ShopASP.Models.Entity.CategoryProduct", b =>
                 {
                     b.HasOne("ShopASP.Models.Entity.Category", "Category")
                         .WithMany()
@@ -517,23 +497,24 @@ namespace ShopASP.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ShopASP.Models.Entity.Developer", "Developer")
-                        .WithMany()
-                        .HasForeignKey("DeveloperId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ShopASP.Models.Entity.Platform", "Platform")
-                        .WithMany()
-                        .HasForeignKey("PlatformId")
+                    b.HasOne("ShopASP.Models.Entity.Product", "Product")
+                        .WithMany("Categories")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Category");
 
-                    b.Navigation("Developer");
+                    b.Navigation("Product");
+                });
 
-                    b.Navigation("Platform");
+            modelBuilder.Entity("ShopASP.Models.Entity.Product", b =>
+                {
+                    b.HasOne("ShopASP.Models.Entity.Developer", "Developer")
+                        .WithMany("Products")
+                        .HasForeignKey("DeveloperId");
+
+                    b.Navigation("Developer");
                 });
 
             modelBuilder.Entity("ShopASP.Models.Entity.ProductGenre", b =>
@@ -593,8 +574,15 @@ namespace ShopASP.Migrations
                     b.Navigation("SystemRequirement");
                 });
 
+            modelBuilder.Entity("ShopASP.Models.Entity.Developer", b =>
+                {
+                    b.Navigation("Products");
+                });
+
             modelBuilder.Entity("ShopASP.Models.Entity.Product", b =>
                 {
+                    b.Navigation("Categories");
+
                     b.Navigation("Genres");
 
                     b.Navigation("MinimumSystemRequirements");

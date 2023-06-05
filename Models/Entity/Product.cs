@@ -5,14 +5,13 @@ namespace ShopASP.Models.Entity;
 
 public class Product : BaseNamed
 {
-    [MaxLength(1000)]
+    [MaxLength(3000)]
     public string Description { get; set; }
     public decimal Price { get; set; }
     public int Units { get; set; }
-    public Platform Platform { get; set; }
     public Developer? Developer { get; set; }
     public DateOnly? ReleaseDate { get; set; }
-    public Image FrontCover;
+    public Image? FrontCover;
     public List<Image>? Screenshots;
     public List<CategoryProduct> Categories { get; set; }
     public ICollection<ProductGenre>? Genres { get; set; }

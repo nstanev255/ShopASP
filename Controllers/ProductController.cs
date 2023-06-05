@@ -11,15 +11,13 @@ public class ProductController : Controller
     private ILogger<ProductController> _logger;
     private IProductService _productService;
     private IGenreService _genreService;
-    private IPlatformService _platformService;
 
     public ProductController(ILogger<ProductController> logger, IProductService productService,
-        IGenreService genreService, IPlatformService platformService)
+        IGenreService genreService)
     {
         _logger = logger;
         _productService = productService;
         _genreService = genreService;
-        _platformService = platformService;
     }
 
     [AllowAnonymous]
@@ -32,10 +30,8 @@ public class ProductController : Controller
         {
             var products = _productService.FindAllByCategory(parsedCategory);
             var allGenres = _genreService.FindAll();
-            var allPlatforms = _platformService.FindAll();
 
-            var model = new ProductListViewModel { Products = products, Genres = allGenres, 
-                Platforms = allPlatforms};
+            var model = new ProductListViewModel { Products = products, Genres = allGenres};
             return View(model: model);
         }
 

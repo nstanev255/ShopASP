@@ -13,8 +13,8 @@ public class DeveloperService : IDeveloperService
         _developerDao = context.Developers;
     }
 
-    public async Task<Developer?> FindOneById(int id)
+    public Developer? FindOneById(int id)
     {
-        return await _developerDao.Where(d => d.Id == id).FirstAsync();
+        return _developerDao.FirstOrDefault(d => d.Id == id);
     }
 }

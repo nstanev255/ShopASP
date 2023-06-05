@@ -12,8 +12,8 @@ public class DatabaseInitializer
         IGenreService genreService, ICategoryService categoryService, IDeveloperService developerService)
     {
         var api = new GdbApi();
-        List<GenreModel>? genreModels = await api.GenreModels();
         var genreEntities = applicationDbContext.Genres;
+        List<GenreModel>? genreModels = await api.GenreModels();
         if (genreModels != null && !genreEntities.Any())
         {
             // Add genres to the database
@@ -62,32 +62,116 @@ public class DatabaseInitializer
         // Fill up the games, with the needed images, platforms and developers.
         DbSet<Product> products = applicationDbContext.Products;
         List<GameModel>? games = await api.Games(0);
-        if (games != null && !products.Any())
+        if (games != null)
         {
             foreach (var game in games)
             {
-                Product product = new Product();
+                
+                // Check if the most important fields are here,
+                // We don't need any game which doesn't have these values
+                if (game.Name == null || game.Summary == null)
+                {
+                    continue;
+                }
+
+                var product = products.FirstOrDefault(p => p.Id == game.Id);
+                if (product != null)
+                {
+                    continue;
+                }
+
+                product = new Product();
 
                 List<InvolvedCompanyModel>? involvedCompanies = await api.InvolvedCompaniesByGameID(game.Id);
+
+                var developer = await HandleDeveloper(involvedCompanies, developerService, api,
+                    applicationDbContext.Developers, applicationDbContext);
+                if (developer == null)
+                {
+                    // If there are no developers, we don't need the game for now.
+                    continue;
+                }
+                Console.WriteLine("developer name " + developer.Name);
+
+                var cover = await HandleCover(game.Cover, api, applicationDbContext.Images);
+
+                var genres = await HandleGenres(game.Genres, genreService, product);
+                var categories = HandleCategories(game.Platforms, product, categoryService);
+                // If the game does not have categories, we don't need it.
+                if (categories.Count == 0)
+                {
+                    continue;
+                }
+
 
                 product.Id = game.Id;
                 product.Name = game.Name;
                 product.Description = game.Summary;
                 product.ReleaseDate = DateOnly.FromDateTime(UnixTimeStampToDateTime(game.FirstReleaseDate));
-                product.Categories = HandleCategories(game.Platforms, product, categoryService);
-                product.Developer = await HandleDeveloper(involvedCompanies, developerService, api);
-
-                await applicationDbContext.AddAsync(product);
+                product.Categories = categories;
+                product.Developer = developer;
+                product.Genres = genres;
+                product.Price = 59.99M;
+                product.Units = 0;
+                product.FrontCover = cover;
+                
+                await applicationDbContext.Products.AddAsync(product);
+                await applicationDbContext.SaveChangesAsync();
             }
         }
+    }
+
+    private static async Task<Image?> HandleCover(int gameCover, GdbApi api, DbSet<Image> dao)
+    {
+        var cover = await api.Cover(gameCover);
+        Image? image = null;
+        if (cover != null)
+        {
+            image = await dao.FirstOrDefaultAsync(i => i.Id == cover.Id);
+            if (image != null)
+            {
+                image = new Image();
+                image.Id = cover.Id;
+                image.Name = cover.ImageId;
+                image.Url = cover.Url;
+
+                await dao.AddAsync(image);
+            }
+        }
+
+        return image;
+    }
+
+    private static async Task<ICollection<ProductGenre>?> HandleGenres(List<int>? gameGenres,
+        IGenreService genreService, Product product)
+    {
+        var productGenres = new List<ProductGenre>();
+
+        foreach (var genreId in gameGenres)
+        {
+            var dbGenre = await genreService.FindOneById(genreId);
+
+            if (dbGenre != null)
+            {
+                var relationship = new ProductGenre();
+                relationship.Genre = dbGenre;
+                relationship.Product = product;
+
+                productGenres.Add(relationship);
+            }
+        }
+
+        return productGenres;
     }
 
     private static List<CategoryProduct> HandleCategories(List<int>? categoryIds, Product product,
         ICategoryService categoryService)
     {
+        Console.WriteLine("inside handle categories.");
         var relationships = new List<CategoryProduct>();
         if (categoryIds == null || !categoryIds.Any())
         {
+            Console.WriteLine("No categories found.");
             return relationships;
         }
 
@@ -105,7 +189,7 @@ public class DatabaseInitializer
     }
 
     private static async Task<Developer?> HandleDeveloper(List<InvolvedCompanyModel>? involvedCompanies,
-        IDeveloperService developerService, GdbApi api)
+        IDeveloperService developerService, GdbApi api, DbSet<Developer> dao, ApplicationDbContext dbContext)
     {
         Developer? developer = null;
         if (involvedCompanies == null || !involvedCompanies.Any())
@@ -119,17 +203,22 @@ public class DatabaseInitializer
             if (company.developer)
             {
                 // We check if the said developer already exists
-                developer = await developerService.FindOneById(company.company);
+                developer = developerService.FindOneById(company.company);
                 // If the developer does not exists, we will just create it here.
+                Console.WriteLine(developer);
                 if (developer == null)
                 {
+                    Console.WriteLine("create new developer");
+                    Console.WriteLine("id " + company.company);
                     // We get the actual company info.
                     var companyInfo = await api.CompanyInfo(company.company);
-                    if (companyInfo != null && companyInfo.Any())
+                    if (companyInfo != null)
                     {
-                        developer = new Developer { Id = companyInfo[0].Id, Name = companyInfo[0].Name };
+                        Console.WriteLine("company info response " + companyInfo.Id);
+                        developer = new Developer { Id = companyInfo.Id, Name = companyInfo.Name };
+                        await dao.AddAsync(developer);
+                        await dbContext.SaveChangesAsync();
                     }
-
                 }
             }
         }
