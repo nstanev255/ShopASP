@@ -13,4 +13,9 @@ public static class PaginationUtils
 
         return page * Constants.ItemsPerPage;
     }
+
+    public static int CalculatePageNumber(int items)
+    {
+        return ((items - 1) / Constants.ItemsPerPage) + 1;
+    }
 }

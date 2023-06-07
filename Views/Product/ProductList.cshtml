@@ -1,4 +1,5 @@
 @using ShopASP.Constants
+@using Microsoft.VisualBasic.CompilerServices
 @model ShopASP.Models.ProductListViewModel
 
 <div class="container">
@@ -7,7 +8,7 @@
         <p> @Constants.Messages["Product_Listing_" + @ViewContext.RouteData.Values["category"]?.ToString()?.ToUpper() + "_Description"] </p>
     </div>
     <hr/>
-        
+
     @if (@Model.Products.Count > 0)
     {
         <div class="row">
@@ -31,10 +32,103 @@
                 </div>
             }
         </div>
+        <nav aria-label="Navigation">
+            <ul class="pagination">
+                @{
+                    int currentPage = 1;
+                    if (@Context.Request.Query.ContainsKey("page") && int.Parse(Context.Request.Query["page"]!) > 1)
+                    {
+                        currentPage = int.Parse(@Context.Request.Query["page"]!);
+                    }
+                }
+
+                @if (currentPage > 1)
+                {
+                    int previousPage = currentPage - 1;
+
+                    <li class="page-item">
+                        <a class="page-link" href="/pc?page=@previousPage">Previous</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="/pc?page=1">Previous</a>
+                    </li>
+                }
+
+                @{
+                    int firstPage = currentPage;
+                    int generateNextPages = 3;
+                    int generatePreviousPages = 3;
+                    if (currentPage < 3)
+                    {
+                        firstPage = 1;
+                        generatePreviousPages = 0;
+                    }else if (currentPage == 3)
+                    {
+                        generatePreviousPages = 2;
+                    }
+
+                    if (firstPage == @Model.AllPages)
+                    {
+                        generateNextPages = 1;
+                    }
+                }
+                @if (generatePreviousPages > 0)
+                {
+                    for (int i = 1; i <= generatePreviousPages; i++)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="/pc?page=@i">@i</a>
+                        </li>
+                    }
+                    <li class="page-item disabled"><a class="page-link">...</a></li>
+                }
+                
+                @for (int loadedPage = 0; loadedPage < generateNextPages; loadedPage++)
+                {
+                    if (firstPage == currentPage)
+                    {
+                        <li class="page-item active">
+                            <a class="page-link" href="/pc?page=@currentPage">@currentPage</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="/pc?page=@firstPage">@firstPage</a>
+                        </li>
+                    }
+
+                    firstPage += 1;
+                }
+
+                @if (currentPage < @Model.AllPages - 3)
+                {
+                    Console.WriteLine(@Model.AllPages);
+                    <li class="page-item disabled"><a class="page-link">...</a></li>
+                    
+                    for (int i = @Model.AllPages - 3; i < @Model.AllPages; i++)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="/pc?page=@i">@i</a>
+                        </li>
+                    }
+                }
+                
+                <li class="page-item">
+                    @{
+                        int nextPage = currentPage + 1;
+                    }
+                    <a class="page-link" href="/pc?page=@nextPage">Next</a>
+                </li>
+            </ul>
+        </nav>
     }
     else
     {
         <h1 class="text-center">@Constants.Messages["Resource_Not_Found"]</h1>
     }
-   
+
 </div>

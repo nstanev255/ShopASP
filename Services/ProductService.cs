@@ -17,7 +17,6 @@ public class ProductService : IProductService
     public List<Product> FindAllByCategory(CategoryType categoryType, int page)
     {
         int offset = PaginationUtils.CalculateOffset(page);
-        Console.WriteLine("Offset " + offset);
 
         return _productDao
             .Where(p => p.Categories.Any(cp => cp.Category.Type == categoryType))
@@ -25,6 +24,11 @@ public class ProductService : IProductService
             .Skip(offset)
             .Take(Constants.Constants.ItemsPerPage)
             .ToList();
+    }
+
+    public async Task<int> CountProductsByCategory(CategoryType categoryType)
+    {
+        return await _productDao.CountAsync(p => p.Categories.Any(cp => cp.Category.Type == categoryType));
     }
 
 }

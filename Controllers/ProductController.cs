@@ -31,7 +31,10 @@ public class ProductController : Controller
             var products = _productService.FindAllByCategory(parsedCategory, page);
             var allGenres = _genreService.FindAll();
 
-            var model = new ProductListViewModel { Products = products, Genres = allGenres};
+            int allProducts = await _productService.CountProductsByCategory(parsedCategory);
+            int allPages = (int)Math.Round(allProducts / Constants.Constants.ItemsPerPage + 0.0M, MidpointRounding.AwayFromZero);
+
+            var model = new ProductListViewModel { Products = products, Genres = allGenres, AllPages = allPages};
             return View(model: model);
         }
 
