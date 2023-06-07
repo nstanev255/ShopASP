@@ -24,7 +24,6 @@ public class ProductController : Controller
     [HttpGet("{category}")]
     public async Task<IActionResult> ProductList(string category, int page = 1)
     {
-        CategoryType parsedCategory;
         ViewData["category"] = category;
         var allGenres = _genreService.FindAll();
 
@@ -71,6 +70,7 @@ public class ProductController : Controller
     [HttpGet("/product/{productId}")]
     public async Task<IActionResult> Product(int productId)
     {
+        _productService.FindByIdAsync(productId);
         return View();
     }
 }
