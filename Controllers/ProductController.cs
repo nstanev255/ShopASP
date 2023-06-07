@@ -42,4 +42,13 @@ public class ProductController : Controller
         // Return 404 if we can't parse the enum.
         return NotFound();
     }
+
+    [AllowAnonymous]
+    [HttpGet("{category}/{productId}")]
+    public async Task<IActionResult> Product(string category, int productId)
+    {
+        
+        return View();
+    }
+
 }
