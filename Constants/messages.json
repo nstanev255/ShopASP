@@ -1,6 +1,12 @@
 {
   "Product_Listing_PC_Title": "PC",
   "Product_Listing_PC_Description": "The uncoordinated nature of the PC game market make precisely assessing its size difficult.[1] PC remains the most important gaming platform with 60% of developers being most interested in developing a game for the platform and 66% of developers currently developing a game for PC.",
+  "Product_Listing_PLAYSTATION_Title": "Playstation",
+  "Product_Listing_PLAYSTATION_Description": "PlayStation (Japanese: プレイステーション, Hepburn: Pureisutēshon, officially abbreviated as PS) is a video gaming brand that consists of five home video game consoles, two handhelds, a media center, and a smartphone, as well as an online service and multiple magazines. The brand is produced by Sony Interactive Entertainment, a division of Sony; the first PlayStation console was released in Japan in December 1994, and worldwide the following year.[1]\n\n",
+  "Product_Listing_XBOX_Title": "Xbox",
+  "Product_Listing_XBOX_Description": "Xbox is a video gaming brand created and owned by Microsoft. The brand consists of five video game consoles, as well as applications (games), streaming service Xbox Cloud Gaming, online services such as the Xbox network and Xbox Game Pass, and the development arm Xbox Game Studios. The brand was first introduced in the United States in November 2001, with the launch of the original Xbox console.",
+  "Product_Listing_NINTENDO_Title": "Nintendo",
+  "Product_Listing_NINTENDO_Discription": "Nintendo Co., Ltd.[b] is a Japanese multinational video game company headquartered in Kyoto. It develops, publishes and releases both video games and video game consoles.\n\n",
   "Games" : "Games",
   "Resource_Not_Found": "Could not find the resources."
 }

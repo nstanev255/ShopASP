@@ -14,21 +14,21 @@ public class ProductService : IProductService
         _productDao = context.Products;
     }
 
-    public List<Product> FindAllByCategory(CategoryType categoryType, int page)
+    public List<Product> FindAllByCategories(List<CategoryType> categoryTypes, int page)
     {
         int offset = PaginationUtils.CalculateOffset(page);
 
         return _productDao
-            .Where(p => p.Categories.Any(cp => cp.Category.Type == categoryType))
+            .Where(p => p.Categories.Any(cp => categoryTypes.Contains(cp.Category.Type)))
             .Include(p => (p as Product).FrontCover)
             .Skip(offset)
             .Take(Constants.Constants.ItemsPerPage)
             .ToList();
     }
 
-    public async Task<int> CountProductsByCategory(CategoryType categoryType)
+    public async Task<int> CountProductsByCategories(List<CategoryType> categoryTypes)
     {
-        return await _productDao.CountAsync(p => p.Categories.Any(cp => cp.Category.Type == categoryType));
+        return await _productDao.CountAsync(p => p.Categories.Any(cp => categoryTypes.Contains(cp.Category.Type)));
     }
 
 }
