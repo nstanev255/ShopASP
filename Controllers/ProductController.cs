@@ -26,29 +26,51 @@ public class ProductController : Controller
     {
         CategoryType parsedCategory;
         ViewData["category"] = category;
+        var allGenres = _genreService.FindAll();
 
-        if (Enum.TryParse(category.ToUpper(), out parsedCategory))
+        List<CategoryType> categoryTypes = new List<CategoryType>();
+
+
+        if (category == Constants.Constants.GENERIC_PC_CATEGORY)
         {
-            var products = _productService.FindAllByCategory(parsedCategory, page);
-            var allGenres = _genreService.FindAll();
-
-            int allProducts = await _productService.CountProductsByCategory(parsedCategory);
-            int allPages = (int)Math.Round(allProducts / Constants.Constants.ItemsPerPage + 0.0M, MidpointRounding.AwayFromZero);
-
-            var model = new ProductListViewModel { Products = products, Genres = allGenres, AllPages = allPages};
-            return View(model: model);
+            categoryTypes.Add(CategoryType.PC);
+        }
+        else if (category == Constants.Constants.GENERIC_PLAYSTATION_CATEGORY)
+        {
+            // If we are in the playstation page, we will return all of the playstation games (for 4 and 5)
+            categoryTypes.Add(CategoryType.PLAYSTATION_4);
+            categoryTypes.Add(CategoryType.PLAYSTATION_5);
+        }
+        else if (category == Constants.Constants.GENERIC_XBOX_CATEGORY)
+        {
+            // If we are in xbox page, we will return all of the xbox games.
+            categoryTypes.Add(CategoryType.XBOX_ONE);
+            categoryTypes.Add(CategoryType.XBOX_XS);
+        }
+        else if (category == Constants.Constants.GENERIC_NINTENDO_CATEGORY)
+        {
+            categoryTypes.Add(CategoryType.NINTENDO_SW);
+        }
+        else
+        {
+            // If the category is not handled, we will return a 404 page.
+            return NotFound();
         }
 
-        // Return 404 if we can't parse the enum.
-        return NotFound();
+        List<Product> products = _productService.FindAllByCategories(categoryTypes, page);
+        int allProducts = await _productService.CountProductsByCategories(categoryTypes);
+
+        int allPages = (int)Math.Round(allProducts / Constants.Constants.ItemsPerPage + 0.0M,
+            MidpointRounding.AwayFromZero);
+        var model = new ProductListViewModel { Products = products, Genres = allGenres, AllPages = allPages };
+        
+        return View(model: model);
     }
 
     [AllowAnonymous]
-    [HttpGet("{category}/{productId}")]
-    public async Task<IActionResult> Product(string category, int productId)
+    [HttpGet("/product/{productId}")]
+    public async Task<IActionResult> Product(int productId)
     {
-        
         return View();
     }
-
 }
