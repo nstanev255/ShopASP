@@ -1,5 +1,4 @@
 @using ShopASP.Constants
-@using Microsoft.VisualBasic.CompilerServices
 @model ShopASP.Models.ProductListViewModel
 
 <div class="container">
@@ -32,6 +31,9 @@
                 </div>
             }
         </div>
+        
+        
+        
         <nav aria-label="Navigation">
             <ul class="pagination">
                 @{
@@ -47,13 +49,13 @@
                     int previousPage = currentPage - 1;
 
                     <li class="page-item">
-                        <a class="page-link" href="/pc?page=@previousPage">Previous</a>
+                        <a class="page-link" href="/@ViewData["category"]?page=@previousPage">Previous</a>
                     </li>
                 }
                 else
                 {
                     <li class="page-item">
-                        <a class="page-link" href="/pc?page=1">Previous</a>
+                        <a class="page-link" href="/@ViewData["category"]?page=1">Previous</a>
                     </li>
                 }
 
@@ -65,7 +67,7 @@
                     {
                         firstPage = 1;
                         generatePreviousPages = 0;
-                    }else if (currentPage == 3)
+                    } else if (currentPage == 3)
                     {
                         generatePreviousPages = 2;
                     }
@@ -80,7 +82,7 @@
                     for (int i = 1; i <= generatePreviousPages; i++)
                     {
                         <li class="page-item">
-                            <a class="page-link" href="/pc?page=@i">@i</a>
+                            <a class="page-link" href="/@ViewData["category"]?page=@i">@i</a>
                         </li>
                     }
                     <li class="page-item disabled"><a class="page-link">...</a></li>
@@ -91,13 +93,13 @@
                     if (firstPage == currentPage)
                     {
                         <li class="page-item active">
-                            <a class="page-link" href="/pc?page=@currentPage">@currentPage</a>
+                            <a class="page-link" href="/@ViewData["category"]?page=@currentPage">@currentPage</a>
                         </li>
                     }
                     else
                     {
                         <li class="page-item">
-                            <a class="page-link" href="/pc?page=@firstPage">@firstPage</a>
+                            <a class="page-link" href="/@ViewData["category"]?page=@firstPage">@firstPage</a>
                         </li>
                     }
 
@@ -106,13 +108,12 @@
 
                 @if (currentPage < @Model.AllPages - 3)
                 {
-                    Console.WriteLine(@Model.AllPages);
                     <li class="page-item disabled"><a class="page-link">...</a></li>
                     
                     for (int i = @Model.AllPages - 3; i < @Model.AllPages; i++)
                     {
                         <li class="page-item">
-                            <a class="page-link" href="/pc?page=@i">@i</a>
+                            <a class="page-link" href="/@ViewData["category"]?page=@i">@i</a>
                         </li>
                     }
                 }
@@ -121,7 +122,7 @@
                     @{
                         int nextPage = currentPage + 1;
                     }
-                    <a class="page-link" href="/pc?page=@nextPage">Next</a>
+                    <a class="page-link" href="/@ViewData["category"]?page=@nextPage">Next</a>
                 </li>
             </ul>
         </nav>

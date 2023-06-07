@@ -25,6 +25,7 @@ public class ProductController : Controller
     public async Task<IActionResult> ProductList(string category, int page = 1)
     {
         CategoryType parsedCategory;
+        ViewData["category"] = category;
 
         if (Enum.TryParse(category.ToUpper(), out parsedCategory))
         {
