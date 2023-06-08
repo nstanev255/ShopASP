@@ -40,6 +40,18 @@
 
             </div>
             <p>@Model.Description</p>
+            
+            @if (Model.Categories.Count > 0)
+            {
+                <label for="platform" class="form-label">@Constants.Messages["Platforms_Text"]</label>
+                <select class="form-select" id="platform">
+                    @foreach (var category in @Model.Categories)
+                    {
+                        <option value="@category.Category.Id">@category.Category.Type.ToString()</option>
+                    }
+                </select>
+            }
+            
         </div>
     </div>
 
