@@ -78,6 +78,6 @@ public class ProductController : Controller
             return NotFound();
         }
 
-        return View();
+        return View(model: product);
     }
 }
