@@ -35,7 +35,7 @@ public class ProductService : IProductService
     {
         return await _productDao.Where(p => p.Id == productId)
             .Include(p => p.Genres).ThenInclude(g => g.Genre)
-            .Include(p => p.Categories)
+            .Include(p => p.Categories).ThenInclude(c => c.Category)
             .Include(p => p.Developer)
             .Include(p => p.FrontCover)
             .Include(p => p.MinimumSystemRequirements)
