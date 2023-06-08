@@ -61,7 +61,7 @@ public class DatabaseInitializer
 
         // Fill up the games, with the needed images, platforms and developers.
         DbSet<Product> products = applicationDbContext.Products;
-        List<GameModel>? games = await api.Games(0);
+        List<GameModel>? games = await api.Games(0, 3);
         if (games != null && !products.Any())
         {
             foreach (var game in games)
@@ -148,6 +148,7 @@ public class DatabaseInitializer
 
         foreach (var genreId in gameGenres)
         {
+            Console.WriteLine("genreId " + genreId);
             var dbGenre = await genreService.FindOneById(genreId);
 
             if (dbGenre != null)

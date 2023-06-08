@@ -34,10 +34,10 @@ public class ProductService : IProductService
     public async Task<Product?> FindByIdAsync(int productId)
     {
         return await _productDao.Where(p => p.Id == productId)
+            .Include(p => p.Genres).ThenInclude(g => g.Genre)
             .Include(p => p.Categories)
             .Include(p => p.Developer)
             .Include(p => p.FrontCover)
-            .Include(p => p.Genres)
             .Include(p => p.MinimumSystemRequirements)
             .Include(p => p.RecommendedSystemRequirements)
             .Include(p => p.Screenshots)

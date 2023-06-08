@@ -8,5 +8,9 @@
   "Product_Listing_NINTENDO_Title": "Nintendo",
   "Product_Listing_NINTENDO_Description": "Nintendo Co., Ltd.[b] is a Japanese multinational video game company headquartered in Kyoto. It develops, publishes and releases both video games and video game consoles.\n\n",
   "Games" : "Games",
-  "Resource_Not_Found": "Could not find the resources."
+  "Resource_Not_Found": "Could not find the resources.",
+  "Out_Of_Stock_Text": "Out of stock",
+  "Add_To_Cart_Text": "Add to cart",
+  "Buy_Text": "Buy",
+  "Money_Symbol": "$"
 }
