@@ -61,7 +61,7 @@ public class DatabaseInitializer
 
         // Fill up the games, with the needed images, platforms and developers.
         DbSet<Product> products = applicationDbContext.Products;
-        List<GameModel>? games = await api.Games(0, 3);
+        List<GameModel>? games = await api.Games(0, 500);
         if (games != null && !products.Any())
         {
             foreach (var game in games)
