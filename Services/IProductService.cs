@@ -11,5 +11,5 @@ public interface IProductService
     /**
      * This method will retrieve a product by its id + all of the relationships.
      */
-    public Task<Product> FindByIdAsync(int productId);
+    public Task<Product?> FindByIdAsync(int productId);
 }

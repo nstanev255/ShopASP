@@ -31,7 +31,7 @@ public class ProductService : IProductService
         return await _productDao.CountAsync(p => p.Categories.Any(cp => categoryTypes.Contains(cp.Category.Type)));
     }
 
-    public async Task<Product> FindByIdAsync(int productId)
+    public async Task<Product?> FindByIdAsync(int productId)
     {
         return await _productDao.Where(p => p.Id == productId)
             .Include(p => p.Categories)
@@ -41,6 +41,6 @@ public class ProductService : IProductService
             .Include(p => p.MinimumSystemRequirements)
             .Include(p => p.RecommendedSystemRequirements)
             .Include(p => p.Screenshots)
-            .FirstAsync();
+            .FirstOrDefaultAsync();
     }
 }

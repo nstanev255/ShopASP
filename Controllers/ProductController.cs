@@ -70,7 +70,14 @@ public class ProductController : Controller
     [HttpGet("/product/{productId}")]
     public async Task<IActionResult> Product(int productId)
     {
-        _productService.FindByIdAsync(productId);
+        var product = await _productService.FindByIdAsync(productId);
+        
+        // If the product is not found, then we need to show 404 page.
+        if (product == null)
+        {
+            return NotFound();
+        }
+
         return View();
     }
 }
