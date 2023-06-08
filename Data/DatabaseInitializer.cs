@@ -131,7 +131,8 @@ public class DatabaseInitializer
                 image = new Image();
                 image.Id = cover.Id;
                 image.Name = cover.ImageId;
-                image.Url = cover.Url;
+                // Make the URL to the image to get the big cover.
+                image.Url = cover.Url.Replace("t_thumb", "t_cover_big");
 
                 await dao.AddAsync(image);
             }
