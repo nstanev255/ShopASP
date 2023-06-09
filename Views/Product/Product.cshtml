@@ -8,7 +8,8 @@
                 <img src="@Model.FrontCover.Url" class="img-fluid"/>
             </div>
             <div class="mt-1">
-                @if (@Model.Units > 0) {
+                @if (@Model.Units > 0)
+                {
                     <button class="btn btn-primary d-inline"> @Constants.Messages["Buy_Text"] @Constants.Messages["Money_Symbol"]@Model.Price </button>
                     <button class="btn btn-dark d-inline">@Constants.Messages["Add_To_Cart_Text"]</button>
                 }
@@ -40,7 +41,7 @@
 
             </div>
             <p>@Model.Description</p>
-            
+
             @if (Model.Categories.Count > 0)
             {
                 <label for="platform" class="form-label">@Constants.Messages["Platforms_Text"]</label>
@@ -51,7 +52,10 @@
                     }
                 </select>
             }
-            
+
+            <h5>@Constants.Messages["Release_Date_Text"]: @Model.ReleaseDate</h5>
+
+
         </div>
     </div>
 
