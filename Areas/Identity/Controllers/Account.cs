@@ -71,8 +71,6 @@ public class Account : Controller
             return View(model: loginInput);
         }
 
-        Console.WriteLine("Return Url" + loginInput.ReturnUrl);
-
         try
         {
             await _authenticationService.LoginUser(loginInput);
