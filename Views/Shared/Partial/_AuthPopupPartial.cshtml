@@ -1,6 +1,23 @@
-<li class="nav-item">
-    <a class="nav-link text-dark" asp-area="Identity" asp-controller="Account" asp-action="Register">Register</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link text-dark" asp-area="Identity"  asp-controller="Account" asp-action="Login">Login</a>
-</li>
+@using Microsoft.AspNetCore.Identity
+@using ShopASP.Constants;
+@inject SignInManager<IdentityUser> SignInManager;
+
+@if (!SignInManager.IsSignedIn(User))
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Identity" asp-controller="Account" asp-action="Register">@Constants.Messages["Register_Text"]</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Identity"  asp-controller="Account" asp-action="Login">@Constants.Messages["Login_Text"]</a>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Identity" asp-controller="Account" asp-action="ProfilePage">@Constants.Messages["Profile_Text"]</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Identity" asp-controller="Account" asp-action="Logout">@Constants.Messages["Logout_Text"]</a>
+    </li>
+}
+
