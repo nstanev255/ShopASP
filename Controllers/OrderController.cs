@@ -27,6 +27,7 @@ public class OrderController : Controller
     [Route("single-order-create")]
     public async Task<IActionResult> CreateSingleOrder(SingleOrderInputModel inputModel)
     {
+        Console.WriteLine("Here");
         try
         {
             await _orderService.PlaceSingleOrder(inputModel);
@@ -34,6 +35,8 @@ public class OrderController : Controller
         }
         catch (Exception exception)
         {
+            string str = exception.ToString();
+            _logger.LogInformation(str);
             //TODO: Show here a failed place order view.
             return NotFound();
         }
@@ -64,7 +67,7 @@ public class OrderController : Controller
         var productPrices = Utils.PriceUtils.ProductPrices(new List<Product> { product });
 
         var basicProduct = new BasicProduct { Id = product.Id, Name = product.Name, Price = product.Price, Image = product.FrontCover.Url };
-        var model = new SingleOrderViewModel { Product = basicProduct, CategoryType = category.Type, 
+        var model = new SingleOrderViewModel { Product = basicProduct, Category = category, 
             FinalPrice = Utils.PriceUtils.CalculateFinalPrice(productPrices), InputModel = new SingleOrderInputModel()};
         
         return View(model);
