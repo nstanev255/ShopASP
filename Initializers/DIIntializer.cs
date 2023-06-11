@@ -18,6 +18,7 @@ public static class DIIntializer
 
         
         builder.Services.Configure<MailConfiguration>(builder.Configuration.GetSection("MailSettings"));
+        builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
         builder.Services.AddScoped<IMailService, MailService>();
     }
 }

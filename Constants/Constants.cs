@@ -6,6 +6,7 @@ public static class Constants
 {
     public static Dictionary<string, string> Messages = LoadMessages();
     public static readonly int ItemsPerPage = 12;
+    public static readonly string DOMAIN = "http://localhost:5276"; 
 
     /**
      * The generic categories are used to handle listing routes.
