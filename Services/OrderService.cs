@@ -233,8 +233,8 @@ public class OrderService : IOrderService
 
     public List<Order> FindAllPaginate(int page)
     {
-        var offest = PaginationUtils.CalculateOffset(page);
+        var offset = PaginationUtils.CalculateOffset(page);
         return _dao.Include(o => o.Products)
-            .ThenInclude(p => p.Product).Skip(offest).Take(Constants.Constants.ItemsPerPage).ToList();
+            .ThenInclude(p => p.Product).Skip(offset).Take(Constants.Constants.ItemsPerPage).ToList();
     }
 }
