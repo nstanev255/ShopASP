@@ -12,7 +12,7 @@
         <div class="card-body">
           <h5 class="card-title">@Model.Product.Name</h5>
           <p class="card-text">@Constants.Messages["Price_Text"] @Model.Product.Price</p>
-          <p class="card-text"><small class="text-muted">@Model.CategoryType.ToString()</small></p>
+          <p class="card-text"><small class="text-muted">@Model.Category.Type.ToString()</small></p>
         </div>
       </div>
     </div>
@@ -20,7 +20,8 @@
   <hr/>
   <h4> @Constants.Messages["Price_Text"] @Constants.Messages["Money_Symbol"]@Model.FinalPrice </h4>
   <form asp-controller="Order" asp-action="CreateSingleOrder">
-    <input type="hidden"/>
+    <input type="hidden" asp-for="InputModel.ProductId" value="@Model.Product.Id"/>
+    <input type="hidden" asp-for="InputModel.CategoryId" value="@Model.Category.Id"/>
     <button class="btn btn-primary" type="submit">@Constants.Messages["Place_Order_Text"]</button>
   </form>
 </div>
