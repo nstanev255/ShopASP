@@ -61,8 +61,8 @@ public class Account : Controller
         return View(model: model);
     }
 
-    [AllowAnonymous]
     [HttpPost]
+    [AllowAnonymous]
     [Route("login")]
     public async Task<IActionResult> Login(LoginInput loginInput)
     {
@@ -71,10 +71,17 @@ public class Account : Controller
             return View(model: loginInput);
         }
 
+        Console.WriteLine("Return Url" + loginInput.ReturnUrl);
+
         try
         {
             await _authenticationService.LoginUser(loginInput);
-            return RedirectToAction("Index", "Home");
+            if (String.IsNullOrEmpty(loginInput.ReturnUrl))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            return Redirect(loginInput.ReturnUrl);
         }
         catch (IdentityException exception)
         {
@@ -88,5 +95,11 @@ public class Account : Controller
     {
         await _authenticationService.LogoutUser();
         return RedirectToAction("Index", "Home", new { area = "" });
+    }
+
+    [Route("profile-page")]
+    public async Task<IActionResult> ProfilePage()
+    {
+        return NotFound();
     }
 }

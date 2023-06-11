@@ -78,6 +78,9 @@ public class ProductController : Controller
             return NotFound();
         }
 
-        return View(model: product);
+        var model = new ProductViewModel();
+        model.Product = product;
+
+        return View(model: model);
     }
 }
