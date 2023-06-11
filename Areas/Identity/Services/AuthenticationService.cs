@@ -1,3 +1,4 @@
+using System.Security.Principal;
 using Microsoft.AspNetCore.Identity;
 using ShopASP.Areas.Identity.Exception;
 using ShopASP.Areas.Identity.Models;
@@ -9,13 +10,15 @@ public class AuthenticationService : IAuthenticationService
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly UserManager<IdentityUser> _userManager;
     private readonly ILogger<IAuthenticationService> _logger;
+    private readonly IHttpContextAccessor _contextAccessor;
 
     public AuthenticationService(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager,
-        ILogger<AuthenticationService> logger)
+        ILogger<AuthenticationService> logger, IHttpContextAccessor contextAccessor)
     {
         _signInManager = signInManager;
         _userManager = userManager;
         _logger = logger;
+        _contextAccessor = contextAccessor;
     }
 
     public async Task Register(RegisterInput model)
@@ -53,6 +56,23 @@ public class AuthenticationService : IAuthenticationService
         {
             throw new IdentityException("Something went wrong, try logging in again..");
         }
+    }
+
+    public IIdentity GetCurrentUser()
+    {
+        var context = _contextAccessor.HttpContext;
+        if (context == null)
+        {
+            throw new System.Exception("Http context is not available");
+        }
+        
+        var identity = context.User.Identity;
+        if (identity == null)
+        {
+            throw new System.Exception("Identity is not available");
+        }
+
+        return identity;
     }
 
     public async Task LogoutUser()
