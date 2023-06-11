@@ -22,19 +22,22 @@ public class MailService : IMailService
     {
         var request = new MailRequest();
         request.Sender = new MailPerson { Email = _configuration.Email, Name = _configuration.Name };
-        request.To = new MailPerson { Email = mail.Recepient };
+        request.To = new List<MailPerson> {new MailPerson { Email = mail.Recepient }};
         request.Subject = mail.Subject;
         request.HtmlContent = mail.Body;
-
-        var jsonString = JsonConvert.SerializeObject(request);
-        Console.WriteLine(jsonString);
         try
         {
-            await _httpClient.PostAsJsonAsync(_configuration.Url, jsonString);
+            var response = await _httpClient.PostAsJsonAsync(_configuration.Url, request);
+            if (!response.IsSuccessStatusCode)
+            {
+                var responseString = await response.Content.ReadAsStringAsync();
+                throw new Exception(responseString);
+            }
         }
         catch (Exception e)
         {
-            throw new Exception("Error sending email.");
+            Console.WriteLine(e.Message);
+            throw new Exception(e.Message);
         }
 
 

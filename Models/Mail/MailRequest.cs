@@ -6,8 +6,10 @@ public class MailRequest
 {
     [JsonProperty("sender")]
     public MailPerson Sender { get; set; }
+    
     [JsonProperty("to")]
-    public MailPerson To { get; set; }
+    public List<MailPerson> To { get; set; }
+    
     [JsonProperty("subject")]
     public string Subject { get; set; }
     [JsonProperty("htmlContent")]

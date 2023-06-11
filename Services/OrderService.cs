@@ -3,6 +3,7 @@ using ShopASP.Models;
 using ShopASP.Models.Entity;
 using ShopASP.Areas.Identity.Services;
 using ShopASP.Data;
+using ShopASP.Models.Mail;
 
 namespace ShopASP.Services;
 
@@ -11,16 +12,18 @@ public class OrderService : IOrderService
     private readonly IProductService _productService;
     private readonly ICategoryService _categoryService;
     private readonly IAuthenticationService _authenticationService;
+    private readonly IMailService _mailService;
 
     private readonly DbSet<Order> _dao;
     private readonly ApplicationDbContext _dbContext;
 
     public OrderService(IProductService productService, ICategoryService categoryService, 
-        IAuthenticationService authenticationService, ApplicationDbContext context)
+        IAuthenticationService authenticationService, IMailService mailService, ApplicationDbContext context)
     {
         _productService = productService;
         _categoryService = categoryService;
         _authenticationService = authenticationService;
+        _mailService = mailService;
         
         _dbContext = context;
         _dao = context.Orders;
@@ -59,6 +62,18 @@ public class OrderService : IOrderService
         // Create the order.
         var orderProduct = new OrderProduct { Product = product, Category = category, Price = product.Price };
         var orderId = await CreateOrder(new List<OrderProduct> { orderProduct }, input.OrderId);
+        // If we are here, then this means that we can send an email.
+        await SendOrderEmail(orderId);
+    }
+
+    private async Task SendOrderEmail(string orderId)
+    {
+        var mail = new Mail();
+        mail.Body = "Successfully placed order " + orderId;
+        mail.Recepient = _authenticationService.GetCurrentUser().Name;
+        mail.Subject = "Successful Order !";
+
+        await _mailService.SendEmail(mail);
     }
 
     private async Task<string> CreateOrder(List<OrderProduct> orderProducts, string uuid)
