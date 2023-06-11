@@ -39,12 +39,17 @@ public class OrderService : IOrderService
 
     private async Task<Order?> FindByUUIDAsync(string uuid)
     {
+        return await _dao.FirstOrDefaultAsync(o => o.UUID == uuid);
+    }
+
+    private async Task<Order?> FindByUUIDAsyncFetch(string uuid)
+    {
         return await _dao.Where(o => o.UUID == uuid).Include(o => o.User).FirstOrDefaultAsync();
     }
 
     public async Task AcceptOrder(string orderId)
     {
-        var order = await FindByUUIDAsync(orderId);
+        var order = await FindByUUIDAsyncFetch(orderId);
         if (order == null)
         {
             throw new Exception("Could not find order");
@@ -56,21 +61,45 @@ public class OrderService : IOrderService
         }
 
         await AcceptOrderDb(order);
-        await SendSuccessfulOrderEmail(order);
+        await SendConfirmationOrderEmail(order, true);
     }
 
-    private async Task SendSuccessfulOrderEmail(Order order)
+    public async Task RejectOrder(string orderId)
+    {
+        var order = await FindByUUIDAsyncFetch(orderId);
+        if (order == null)
+        {
+            throw new Exception("Order does not exist");
+        }
+
+        if (order.Status != OrderStatus.NOT_PROCESSED)
+        {
+            throw new Exception("Order is already processed");
+        }
+
+        await RejectOrderDb(order);
+        await SendConfirmationOrderEmail(order, false);
+    }
+
+    private async Task RejectOrderDb(Order order)
+    {
+        order.Status = OrderStatus.REJECTED;
+        _dao.Update(order);
+        await _dbContext.SaveChangesAsync();
+    }
+
+    private async Task SendConfirmationOrderEmail(Order order, bool accepted)
     {
         var mail = new Mail
         {
             Subject = "Accepted Order !",
-            Body = $"The order {order.UUID} has been accepted !",
+            Body = $"The order {order.UUID} has been {(accepted ? "accepted" : "rejected")} !",
             Recepient = order.User.UserName
         };
         await _mailService.SendEmail(mail);
     }
 
-    public async Task AcceptOrderDb(Order order)
+    private async Task AcceptOrderDb(Order order)
     {
         order.Status = OrderStatus.ACCEPTED;
         _dao.Update(order);
