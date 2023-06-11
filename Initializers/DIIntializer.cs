@@ -1,4 +1,5 @@
 using ShopASP.Areas.Identity.Services;
+using ShopASP.Configuration;
 using ShopASP.Services;
 
 namespace ShopASP.Initializers;
@@ -14,5 +15,9 @@ public static class DIIntializer
         builder.Services.AddScoped<IDeveloperService, DeveloperService>();
         builder.Services.AddScoped<IOrderService, OrderService>();
         builder.Services.AddHttpContextAccessor();
+
+        
+        builder.Services.Configure<MailConfiguration>(builder.Configuration.GetSection("MailSettings"));
+        builder.Services.AddScoped<IMailService, MailService>();
     }
 }

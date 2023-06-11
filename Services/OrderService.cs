@@ -61,7 +61,7 @@ public class OrderService : IOrderService
         var orderId = await CreateOrder(new List<OrderProduct> { orderProduct }, input.OrderId);
     }
 
-    private async Task<int> CreateOrder(List<OrderProduct> orderProducts, string uuid)
+    private async Task<string> CreateOrder(List<OrderProduct> orderProducts, string uuid)
     {
         var identity = _authenticationService.GetCurrentUser();
         if (identity.Name == null)
@@ -87,6 +87,6 @@ public class OrderService : IOrderService
         var record = await _dao.AddAsync(order);
         await _dbContext.SaveChangesAsync();
 
-        return record.Entity.Id;
+        return record.Entity.UUID;
     }
 }
