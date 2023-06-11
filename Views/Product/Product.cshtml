@@ -2,61 +2,63 @@
 @model ShopASP.Models.Entity.Product
 
 <div class="container">
-    <div class="row">
-        <div class="col">
-            <div>
-                <img src="@Model.FrontCover.Url" class="img-fluid"/>
-            </div>
-            <div class="mt-1">
-                @if (@Model.Units > 0)
-                {
-                    <button class="btn btn-primary d-inline"> @Constants.Messages["Buy_Text"] @Constants.Messages["Money_Symbol"]@Model.Price </button>
-                    <button class="btn btn-dark d-inline">@Constants.Messages["Add_To_Cart_Text"]</button>
-                }
-                else
-                {
-                    <button class="btn bg-danger disabled">@Constants.Messages["Out_Of_Stock_Text"]</button>
-                }
-            </div>
-        </div>
-        <div class="col">
-            <h1>@Model.Name</h1>
-            <div class="d-inline">
-                @if (Model.Genres != null && Model.Genres.Count > 0)
-                {
-                    int iteration = 0;
-                    @foreach (var genre in @Model.Genres)
-                    {
-                        if (iteration == 0)
-                        {
-                            <h3 class="d-inline">@genre.Genre.Name</h3>
-                        }
-                        else
-                        {
-                            <h3 class="d-inline">, @genre.Genre.Name</h3>
-                        }
-                        iteration++;
-                    }
-                }
+   <form asp-controller="Order" asp-action="LoadOrder">
+   <div class="row">
+       <div class="col">
+           <div>
+               <img src="@Model.FrontCover.Url" class="img-fluid"/>
+           </div>
+           <div class="mt-1">
+               @if (@Model.Units > 0)
+               {
+                   <button class="btn btn-primary d-inline"> @Constants.Messages["Buy_Text"] @Constants.Messages["Money_Symbol"]@Model.Price </button>
+                   <button class="btn btn-dark d-inline">@Constants.Messages["Add_To_Cart_Text"]</button>
+               }
+               else
+               {
+                   <button class="btn bg-danger disabled">@Constants.Messages["Out_Of_Stock_Text"]</button>
+               }
+           </div>
+       </div>
+       <div class="col">
+           <h1>@Model.Name</h1>
+           <div class="d-inline">
+               @if (Model.Genres != null && Model.Genres.Count > 0)
+               {
+                   int iteration = 0;
+                   @foreach (var genre in @Model.Genres)
+                   {
+                       if (iteration == 0)
+                       {
+                           <h3 class="d-inline">@genre.Genre.Name</h3>
+                       }
+                       else
+                       {
+                           <h3 class="d-inline">, @genre.Genre.Name</h3>
+                       }
+                       iteration++;
+                   }
+               }
 
-            </div>
-            <p>@Model.Description</p>
+           </div>
+           <p>@Model.Description</p>
 
-            @if (Model.Categories.Count > 0)
-            {
-                <label for="platform" class="form-label">@Constants.Messages["Platforms_Text"]</label>
-                <select class="form-select" id="platform">
-                    @foreach (var category in @Model.Categories)
-                    {
-                        <option value="@category.Category.Id">@category.Category.Type.ToString()</option>
-                    }
-                </select>
-            }
+           @if (Model.Categories.Count > 0)
+           {
+               <label for="platform" class="form-label">@Constants.Messages["Platforms_Text"]</label>
+               <select class="form-select" id="platform">
+                   @foreach (var category in @Model.Categories)
+                   {
+                       <option value="@category.Category.Id">@category.Category.Type.ToString()</option>
+                   }
+               </select>
+           }
 
-            <h5>@Constants.Messages["Release_Date_Text"]: @Model.ReleaseDate</h5>
+           <h5>@Constants.Messages["Release_Date_Text"]: @Model.ReleaseDate</h5>
 
 
-        </div>
-    </div>
+       </div>
+   </div>
+   </form>
 
 </div>
