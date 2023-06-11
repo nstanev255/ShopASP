@@ -61,6 +61,23 @@ public class OrderController : Controller
         return View();
     }
 
+    [AllowAnonymous]
+    [HttpGet]
+    [Route("reject/{orderId:required}")]
+    public async Task<IActionResult> RejectOrder(string orderId)
+    {
+        try
+        {
+            await _orderService.RejectOrder(orderId);
+        }
+        catch (Exception e)
+        {
+            return NotFound();
+        }
+
+        return View();
+    }
+
     /**
      * This Action is used so that we can order a single game.
      */
