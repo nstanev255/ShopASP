@@ -8,12 +8,12 @@ namespace ShopASP.Areas.Identity.Controllers;
 
 [Area("Identity")]
 [Route("identity/account")]
-public class Account : Controller
+public class AccountController : Controller
 {
     private readonly IAuthenticationService _authenticationService;
-    private readonly ILogger<Account> _logger;
+    private readonly ILogger<AccountController> _logger;
 
-    public Account(IAuthenticationService authenticationService, ILogger<Account> logger)
+    public AccountController(IAuthenticationService authenticationService, ILogger<AccountController> logger)
     {
         _authenticationService = authenticationService;
         _logger = logger;
@@ -93,11 +93,5 @@ public class Account : Controller
     {
         await _authenticationService.LogoutUser();
         return RedirectToAction("Index", "Home", new { area = "" });
-    }
-
-    [Route("profile-page")]
-    public async Task<IActionResult> ProfilePage()
-    {
-        return NotFound();
     }
 }

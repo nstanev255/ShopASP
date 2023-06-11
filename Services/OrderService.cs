@@ -4,6 +4,7 @@ using ShopASP.Models.Entity;
 using ShopASP.Areas.Identity.Services;
 using ShopASP.Data;
 using ShopASP.Models.Mail;
+using ShopASP.Utils;
 
 namespace ShopASP.Services;
 
@@ -103,9 +104,9 @@ public class OrderService : IOrderService
         }
 
         RejectOrderDb(order);
-        _productService.AddToQuantityMany( OrderProductToProduct(order.Products), 1);
+        _productService.AddToQuantityMany(OrderProductToProduct(order.Products), 1);
         await SendConfirmationOrderEmail(order, false);
-        
+
         await _dbContext.SaveChangesAsync();
     }
 
@@ -151,7 +152,7 @@ public class OrderService : IOrderService
         {
             throw new Exception("Order already exists");
         }
-        
+
         // Remove from the quantity of the product.
         _productService.RemoveFromQuantity(product, 1);
 
@@ -223,5 +224,17 @@ public class OrderService : IOrderService
         var record = await _dao.AddAsync(order);
 
         return record.Entity.UUID;
+    }
+
+    public int CountAll()
+    {
+        return _dao.Count();
+    }
+
+    public List<Order> FindAllPaginate(int page)
+    {
+        var offest = PaginationUtils.CalculateOffset(page);
+        return _dao.Include(o => o.Products)
+            .ThenInclude(p => p.Product).Skip(offest).Take(Constants.Constants.ItemsPerPage).ToList();
     }
 }
