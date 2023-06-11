@@ -12,7 +12,7 @@
             <th scope="col">Id</th>
             <th scope="col">Products</th>
             <th scope="col">Status</th>
-            <th scope="col">Cancel</th>
+            <th scope="col">View</th>
         </tr>
         </thead>
         <tbody>
@@ -28,7 +28,7 @@
                 </td>
                 <td>@order.Status</td>
                 <td>
-                    <button class="btn btn-danger">Cancel</button>
+                    <button class="btn btn-primary">View</button>
                 </td>
             </tr>
         }
@@ -37,13 +37,39 @@
     <nav aria-label="Pagination">
         <ul class="pagination">
             @{
-                var pages = PaginationUtils.GetPaginationLimits(@Model.CurrentPage, @Model.AllPages);
+                var pageLimits = PaginationUtils.GetPaginationLimits(@Model.CurrentPage, @Model.AllPages);
+
+                var previousPage = @Model.CurrentPage - 1;
+                var previousPageDisabled = "";
+                if (previousPage <= 0)
+                {
+                    previousPageDisabled = "disabled";
+                }
+
+                var nextPage = @Model.CurrentPage + 1;
+                var nextPageDisabled = "";
+                if (nextPage > @Model.AllPages)
+                {
+                    nextPageDisabled = "disabled";
+                }
             }
 
-            @for (int start = pages[0]; start <= pages[1]; start++)
+
+            <li class="page-item @previousPageDisabled">
+                <a class="page-link" href="@Url.Action("ProfilePage", "Profile", new { page = previousPage })">Previous</a>
+            </li>
+
+            @for (int start = pageLimits[0]; start <= pageLimits[1]; start++)
             {
-                <li class="page-item"><a class="page-link">@start</a></li>
+                var active = start == @Model.CurrentPage ? "active" : "";
+                <li class="page-item @active">
+                    <a class="page-link" href="@Url.Action("ProfilePage", "Profile", new { page = start })">@start</a>
+                </li>
             }
+
+            <li class="page-item @nextPageDisabled">
+                <a class="page-link" href="@Url.Action("ProfilePage", "Profile", new { page = nextPage })">Next</a>
+            </li>
         </ul>
     </nav>
 
