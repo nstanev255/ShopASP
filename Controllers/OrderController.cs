@@ -37,10 +37,9 @@ public class OrderController : Controller
         }
         catch (Exception exception)
         {
-            string str = exception.ToString();
-            _logger.LogInformation(str);
-            //TODO: Show here a failed place order view.
-            return NotFound();
+            var errorModel = new ErrorViewModel();
+            errorModel.Message = exception.Message;
+            return View("Error", errorModel);
         }
     }
 
@@ -53,9 +52,11 @@ public class OrderController : Controller
         {
             await _orderService.AcceptOrder(orderId);
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            return NotFound();
+            var errorModel = new ErrorViewModel();
+            errorModel.Message = exception.Message;
+            return View("Error", errorModel);
         }
 
         return View();
@@ -70,9 +71,11 @@ public class OrderController : Controller
         {
             await _orderService.RejectOrder(orderId);
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            return NotFound();
+            var errorModel = new ErrorViewModel();
+            errorModel.Message = exception.Message;
+            return View("Error", errorModel);
         }
 
         return View();
@@ -90,14 +93,18 @@ public class OrderController : Controller
         var product = await _productService.FindByIdAsync(productId);
         if (product == null)
         {
-            return NotFound();
+            var errorModel = new ErrorViewModel();
+            errorModel.Message = "Product not found";
+            return View("Error", errorModel);
         }
 
         // If this category does not exist, we will just return 404.
         var category = _categoryService.FindOneById(categoryId);
         if (category == null)
         {
-            return NotFound();
+            var errorModel = new ErrorViewModel();
+            errorModel.Message = "Category not found";
+            return View("Error", errorModel);
         }
 
         var productPrices = Utils.PriceUtils.ProductPrices(new List<Product> { product });
