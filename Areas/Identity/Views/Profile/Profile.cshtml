@@ -1,0 +1,50 @@
+@using ShopASP.Utils
+@model ShopASP.Areas.Identity.Models.AccountOrdersViewModel;
+
+@{
+    Layout = "_ProfilePageLayout";
+}
+
+<div class="container">
+    <table class="table table-stripped table-hover">
+        <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Products</th>
+            <th scope="col">Status</th>
+            <th scope="col">Cancel</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var order in @Model.Orders)
+        {
+            <tr>
+                <th>@order.Id</th>
+                <td>
+                    @foreach (var orderProduct in @order.Products)
+                    {
+                        <p>@orderProduct.Product.Name</p>
+                    }
+                </td>
+                <td>@order.Status</td>
+                <td>
+                    <button class="btn btn-danger">Cancel</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    <nav aria-label="Pagination">
+        <ul class="pagination">
+            @{
+                var pages = PaginationUtils.GetPaginationLimits(@Model.CurrentPage, @Model.AllPages);
+            }
+
+            @for (int start = pages[0]; start <= pages[1]; start++)
+            {
+                <li class="page-item"><a class="page-link">@start</a></li>
+            }
+        </ul>
+    </nav>
+
+</div>

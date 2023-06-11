@@ -1,4 +1,5 @@
 @using ShopASP.Constants
+@using ShopASP.Utils
 @model ShopASP.Models.ProductListViewModel
 
 <div class="container">
@@ -37,91 +38,34 @@
         <nav aria-label="Navigation">
             <ul class="pagination">
                 @{
-                    int currentPage = 1;
-                    if (@Context.Request.Query.ContainsKey("page") && int.Parse(Context.Request.Query["page"]!) > 1)
-                    {
-                        currentPage = int.Parse(@Context.Request.Query["page"]!);
-                    }
-                }
+                    var pageLimits = PaginationUtils.GetPaginationLimits(@Model.CurrentPage, @Model.AllPages);
 
-                @if (currentPage > 1)
-                {
-                    int previousPage = currentPage - 1;
-
-                    <li class="page-item">
-                        <a class="page-link" href="/@ViewData["category"]?page=@previousPage">Previous</a>
-                    </li>
-                }
-                else
-                {
-                    <li class="page-item">
-                        <a class="page-link" href="/@ViewData["category"]?page=1">Previous</a>
-                    </li>
-                }
-
-                @{
-                    int firstPage = currentPage;
-                    int generateNextPages = 3;
-                    int generatePreviousPages = 3;
-                    if (currentPage < 3)
+                    var previousPage = @Model.CurrentPage - 1;
+                    var previousPageDisabled = "";
+                    if (previousPage <= 0)
                     {
-                        firstPage = 1;
-                        generatePreviousPages = 0;
-                    } else if (currentPage == 3)
-                    {
-                        generatePreviousPages = 2;
+                        previousPageDisabled = "disabled";
                     }
 
-                    if (firstPage == @Model.AllPages)
+                    var nextPage = @Model.CurrentPage + 1;
+                    var nextPageDisabled = "";
+                    if (nextPage >= @Model.AllPages)
                     {
-                        generateNextPages = 1;
-                    }
-                }
-                @if (generatePreviousPages > 0)
-                {
-                    for (int i = 1; i <= generatePreviousPages; i++)
-                    {
-                        <li class="page-item">
-                            <a class="page-link" href="/@ViewData["category"]?page=@i">@i</a>
-                        </li>
-                    }
-                    <li class="page-item disabled"><a class="page-link">...</a></li>
-                }
-                
-                @for (int loadedPage = 0; loadedPage < generateNextPages; loadedPage++)
-                {
-                    if (firstPage == currentPage)
-                    {
-                        <li class="page-item active">
-                            <a class="page-link" href="/@ViewData["category"]?page=@currentPage">@currentPage</a>
-                        </li>
-                    }
-                    else
-                    {
-                        <li class="page-item">
-                            <a class="page-link" href="/@ViewData["category"]?page=@firstPage">@firstPage</a>
-                        </li>
-                    }
-
-                    firstPage += 1;
-                }
-
-                @if (currentPage < @Model.AllPages - 3)
-                {
-                    <li class="page-item disabled"><a class="page-link">...</a></li>
-                    
-                    for (int i = @Model.AllPages - 3; i < @Model.AllPages; i++)
-                    {
-                        <li class="page-item">
-                            <a class="page-link" href="/@ViewData["category"]?page=@i">@i</a>
-                        </li>
+                        nextPageDisabled = "disabled";
                     }
                 }
                 
-                <li class="page-item">
-                    @{
-                        int nextPage = currentPage + 1;
-                    }
+                <li class="page-item @previousPageDisabled">
+                    <a class="page-link" href="/@ViewData["category"]?page=@previousPage">Previous</a>
+                </li>
+                
+                @for (int start = @pageLimits[0]; start < @pageLimits[1]; start++)
+                {
+                    var active = start == @Model.CurrentPage ? "active" : "";
+                    <li class="page-item @active"><a class="page-link @active" href="/@ViewData["category"]?page=@start">@start</a></li>
+                }
+                
+                <li class="page-item @nextPageDisabled">
                     <a class="page-link" href="/@ViewData["category"]?page=@nextPage">Next</a>
                 </li>
             </ul>

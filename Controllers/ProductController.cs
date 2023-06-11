@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ShopASP.Models;
 using ShopASP.Models.Entity;
 using ShopASP.Services;
+using ShopASP.Utils;
 
 namespace ShopASP.Controllers;
 
@@ -59,9 +60,8 @@ public class ProductController : Controller
         List<Product> products = _productService.FindAllByCategories(categoryTypes, page);
         int allProducts = await _productService.CountProductsByCategories(categoryTypes);
 
-        int allPages = (int)Math.Round(allProducts / Constants.Constants.ItemsPerPage + 0.0M,
-            MidpointRounding.AwayFromZero);
-        var model = new ProductListViewModel { Products = products, Genres = allGenres, AllPages = allPages };
+        int allPages = PaginationUtils.CalculatePageNumber(allProducts);
+        var model = new ProductListViewModel { Products = products, Genres = allGenres, AllPages = allPages, CurrentPage = page};
         
         return View(model: model);
     }

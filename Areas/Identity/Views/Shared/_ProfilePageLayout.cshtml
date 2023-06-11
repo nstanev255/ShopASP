@@ -1,0 +1,19 @@
+@{
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <div>
+        <h2><span class="badge bg-secondary">@User.Identity.Name</span></h2>
+    </div>
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" asp-controller="Profile" asp-action="ProfilePage">Orders</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-controller="Profile" asp-action="ProfilePage">Settings</a>
+        </li>
+    </ul>
+</div>
+
+@RenderBody()
