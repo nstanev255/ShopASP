@@ -26,6 +26,16 @@ public class OrderService : IOrderService
         _dao = context.Orders;
     }
 
+    private async Task<Order?> FindByIdAsync(int id)
+    {
+        return await _dao.FirstOrDefaultAsync(o => o.Id == id);
+    }
+
+    private async Task<Order?> FindByUUIDAsync(string uuid)
+    {
+        return await _dao.FirstOrDefaultAsync(o => o.UUID == uuid);
+    }
+
     public async Task PlaceSingleOrder(SingleOrderInputModel input)
     {
         var product = await _productService.FindByIdAsync(input.ProductId);
@@ -40,12 +50,18 @@ public class OrderService : IOrderService
             throw new Exception("Category not found");
         }
 
+        var order = await FindByUUIDAsync(input.OrderId);
+        if (order != null)
+        {
+            throw new Exception("Order already exists");
+        }
+
         // Create the order.
         var orderProduct = new OrderProduct { Product = product, Category = category, Price = product.Price };
-        var orderId = await CreateOrder(new List<OrderProduct> { orderProduct });
+        var orderId = await CreateOrder(new List<OrderProduct> { orderProduct }, input.OrderId);
     }
 
-    private async Task<int> CreateOrder(List<OrderProduct> orderProducts)
+    private async Task<int> CreateOrder(List<OrderProduct> orderProducts, string uuid)
     {
         var identity = _authenticationService.GetCurrentUser();
         if (identity.Name == null)
@@ -66,6 +82,7 @@ public class OrderService : IOrderService
         order.User = user;
         order.FinalPrice = Utils.PriceUtils.CalculateFinalPrice(prices);
         order.Status = OrderStatus.NOT_PROCESSED;
+        order.UUID = uuid;
 
         var record = await _dao.AddAsync(order);
         await _dbContext.SaveChangesAsync();

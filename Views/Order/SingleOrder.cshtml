@@ -22,6 +22,7 @@
   <form asp-controller="Order" asp-action="CreateSingleOrder">
     <input type="hidden" asp-for="InputModel.ProductId" value="@Model.Product.Id"/>
     <input type="hidden" asp-for="InputModel.CategoryId" value="@Model.Category.Id"/>
+    <input type="hidden" asp-for="InputModel.OrderId" value="@Model.InputModel.OrderId"/>
     <button class="btn btn-primary" type="submit">@Constants.Messages["Place_Order_Text"]</button>
   </form>
 </div>

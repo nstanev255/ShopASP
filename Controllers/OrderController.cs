@@ -68,7 +68,7 @@ public class OrderController : Controller
 
         var basicProduct = new BasicProduct { Id = product.Id, Name = product.Name, Price = product.Price, Image = product.FrontCover.Url };
         var model = new SingleOrderViewModel { Product = basicProduct, Category = category, 
-            FinalPrice = Utils.PriceUtils.CalculateFinalPrice(productPrices), InputModel = new SingleOrderInputModel()};
+            FinalPrice = Utils.PriceUtils.CalculateFinalPrice(productPrices), InputModel = new SingleOrderInputModel { OrderId = Utils.UUID.Generate()}};
         
         return View(model);
     }
