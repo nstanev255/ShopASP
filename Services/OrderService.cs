@@ -18,7 +18,7 @@ public class OrderService : IOrderService
     private readonly DbSet<Order> _dao;
     private readonly ApplicationDbContext _dbContext;
 
-    public OrderService(IProductService productService, ICategoryService categoryService, 
+    public OrderService(IProductService productService, ICategoryService categoryService,
         IAuthenticationService authenticationService, IMailService mailService,
         IConfigurationService configuration, ApplicationDbContext context)
     {
@@ -27,7 +27,7 @@ public class OrderService : IOrderService
         _authenticationService = authenticationService;
         _mailService = mailService;
         _configurationService = configuration;
-        
+
         _dbContext = context;
         _dao = context.Orders;
     }
@@ -39,7 +39,42 @@ public class OrderService : IOrderService
 
     private async Task<Order?> FindByUUIDAsync(string uuid)
     {
-        return await _dao.FirstOrDefaultAsync(o => o.UUID == uuid);
+        return await _dao.Where(o => o.UUID == uuid).Include(o => o.User).FirstOrDefaultAsync();
+    }
+
+    public async Task AcceptOrder(string orderId)
+    {
+        var order = await FindByUUIDAsync(orderId);
+        if (order == null)
+        {
+            throw new Exception("Could not find order");
+        }
+
+        if (order.Status != OrderStatus.NOT_PROCESSED)
+        {
+            throw new Exception("Order already processed");
+        }
+
+        await AcceptOrderDb(order);
+        await SendSuccessfulOrderEmail(order);
+    }
+
+    private async Task SendSuccessfulOrderEmail(Order order)
+    {
+        var mail = new Mail
+        {
+            Subject = "Accepted Order !",
+            Body = $"The order {order.UUID} has been accepted !",
+            Recepient = order.User.UserName
+        };
+        await _mailService.SendEmail(mail);
+    }
+
+    public async Task AcceptOrderDb(Order order)
+    {
+        order.Status = OrderStatus.ACCEPTED;
+        _dao.Update(order);
+        await _dbContext.SaveChangesAsync();
     }
 
     public async Task PlaceSingleOrder(SingleOrderInputModel input)
@@ -65,8 +100,13 @@ public class OrderService : IOrderService
         // Create the order.
         var orderProduct = new OrderProduct { Product = product, Category = category, Price = product.Price };
         var orderId = await CreateOrder(new List<OrderProduct> { orderProduct }, input.OrderId);
-        // If we are here, then this means that we can send an email.
+        // If we are here, then this means that we can send the emails.
+
+        // This will send to the orderer that their order is placed successfully.
         await SendOrderEmail(orderId);
+
+        // This will send an email to the Shop, where they can decide if they want to accept the order.
+        await SendRejectAcceptEmail(orderId);
     }
 
     private async Task SendOrderEmail(string orderId)
@@ -90,7 +130,8 @@ public class OrderService : IOrderService
 
         var mailBody = $"<div> {acceptLink} | {rejectLink} </div>";
 
-        var mail = new Mail {Subject = "New Order !", Body = mailBody, Recepient = _configurationService.GetShopEmail()};
+        var mail = new Mail
+            { Subject = "New Order !", Body = mailBody, Recepient = _configurationService.GetShopEmail() };
 
         await _mailService.SendEmail(mail);
     }
@@ -102,7 +143,7 @@ public class OrderService : IOrderService
         {
             throw new Exception("Username is not available");
         }
-        
+
         var user = _authenticationService.FindUserByUsername(identity.Name);
         if (user == null)
         {
@@ -110,7 +151,7 @@ public class OrderService : IOrderService
         }
 
         List<decimal> prices = Utils.PriceUtils.OrderProductPrices(orderProducts);
-        
+
         Order order = new Order();
         order.Products = orderProducts;
         order.User = user;

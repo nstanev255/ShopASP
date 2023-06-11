@@ -13,7 +13,9 @@ public class OrderController : Controller
     private IProductService _productService;
     private ICategoryService _categoryService;
     private IOrderService _orderService;
-    public OrderController(ILogger<OrderController> logger, IProductService productService, ICategoryService categoryService,
+
+    public OrderController(ILogger<OrderController> logger, IProductService productService,
+        ICategoryService categoryService,
         IOrderService orderService)
     {
         _logger = logger;
@@ -42,6 +44,23 @@ public class OrderController : Controller
         }
     }
 
+    [AllowAnonymous]
+    [HttpGet]
+    [Route("accept/{orderId:required}")]
+    public async Task<IActionResult> AcceptOrder(string orderId)
+    {
+        try
+        {
+            await _orderService.AcceptOrder(orderId);
+        }
+        catch (Exception e)
+        {
+            return NotFound();
+        }
+
+        return View();
+    }
+
     /**
      * This Action is used so that we can order a single game.
      */
@@ -56,7 +75,7 @@ public class OrderController : Controller
         {
             return NotFound();
         }
-        
+
         // If this category does not exist, we will just return 404.
         var category = _categoryService.FindOneById(categoryId);
         if (category == null)
@@ -66,10 +85,15 @@ public class OrderController : Controller
 
         var productPrices = Utils.PriceUtils.ProductPrices(new List<Product> { product });
 
-        var basicProduct = new BasicProduct { Id = product.Id, Name = product.Name, Price = product.Price, Image = product.FrontCover.Url };
-        var model = new SingleOrderViewModel { Product = basicProduct, Category = category, 
-            FinalPrice = Utils.PriceUtils.CalculateFinalPrice(productPrices), InputModel = new SingleOrderInputModel { OrderId = Utils.UUID.Generate()}};
-        
+        var basicProduct = new BasicProduct
+            { Id = product.Id, Name = product.Name, Price = product.Price, Image = product.FrontCover.Url };
+        var model = new SingleOrderViewModel
+        {
+            Product = basicProduct, Category = category,
+            FinalPrice = Utils.PriceUtils.CalculateFinalPrice(productPrices),
+            InputModel = new SingleOrderInputModel { OrderId = Utils.UUID.Generate() }
+        };
+
         return View(model);
     }
 }
