@@ -44,7 +44,10 @@ public class OrderService : IOrderService
 
     private async Task<Order?> FindByUUIDAsyncFetch(string uuid)
     {
-        return await _dao.Where(o => o.UUID == uuid).Include(o => o.User).FirstOrDefaultAsync();
+        return await _dao.Where(o => o.UUID == uuid)
+            .Include(o => o.User)
+            .Include(o => o.Products).ThenInclude(p => p.Product)
+            .FirstOrDefaultAsync();
     }
 
     public async Task AcceptOrder(string orderId)
@@ -60,8 +63,30 @@ public class OrderService : IOrderService
             throw new Exception("Order already processed");
         }
 
-        await AcceptOrderDb(order);
+        AcceptOrderDb(order);
         await SendConfirmationOrderEmail(order, true);
+
+        await _dbContext.SaveChangesAsync();
+    }
+
+    private List<Product> OrderProductToProduct(List<OrderProduct> orderProducts)
+    {
+        Console.WriteLine("OrderProducts" + orderProducts);
+        var products = new List<Product>();
+        if (orderProducts.Count == 0)
+        {
+            return products;
+        }
+
+        foreach (var orderProduct in orderProducts)
+        {
+            var product = orderProduct.Product;
+
+            Console.WriteLine("Product " + product);
+            products.Add(product);
+        }
+
+        return products;
     }
 
     public async Task RejectOrder(string orderId)
@@ -77,15 +102,17 @@ public class OrderService : IOrderService
             throw new Exception("Order is already processed");
         }
 
-        await RejectOrderDb(order);
+        RejectOrderDb(order);
+        _productService.AddToQuantityMany( OrderProductToProduct(order.Products), 1);
         await SendConfirmationOrderEmail(order, false);
+        
+        await _dbContext.SaveChangesAsync();
     }
 
-    private async Task RejectOrderDb(Order order)
+    private void RejectOrderDb(Order order)
     {
         order.Status = OrderStatus.REJECTED;
         _dao.Update(order);
-        await _dbContext.SaveChangesAsync();
     }
 
     private async Task SendConfirmationOrderEmail(Order order, bool accepted)
@@ -99,11 +126,10 @@ public class OrderService : IOrderService
         await _mailService.SendEmail(mail);
     }
 
-    private async Task AcceptOrderDb(Order order)
+    private void AcceptOrderDb(Order order)
     {
         order.Status = OrderStatus.ACCEPTED;
         _dao.Update(order);
-        await _dbContext.SaveChangesAsync();
     }
 
     public async Task PlaceSingleOrder(SingleOrderInputModel input)
@@ -125,6 +151,9 @@ public class OrderService : IOrderService
         {
             throw new Exception("Order already exists");
         }
+        
+        // Remove from the quantity of the product.
+        _productService.RemoveFromQuantity(product, 1);
 
         // Create the order.
         var orderProduct = new OrderProduct { Product = product, Category = category, Price = product.Price };
@@ -136,6 +165,9 @@ public class OrderService : IOrderService
 
         // This will send an email to the Shop, where they can decide if they want to accept the order.
         await SendRejectAcceptEmail(orderId);
+
+        // After all is done, we will save the changes.
+        await _dbContext.SaveChangesAsync();
     }
 
     private async Task SendOrderEmail(string orderId)
@@ -189,7 +221,6 @@ public class OrderService : IOrderService
         order.UUID = uuid;
 
         var record = await _dao.AddAsync(order);
-        await _dbContext.SaveChangesAsync();
 
         return record.Entity.UUID;
     }

@@ -8,7 +8,7 @@ namespace ShopASP.Services;
 public class ProductService : IProductService
 {
     private readonly DbSet<Product> _productDao;
-    
+
     public ProductService(ApplicationDbContext context)
     {
         _productDao = context.Products;
@@ -42,5 +42,35 @@ public class ProductService : IProductService
             .Include(p => p.RecommendedSystemRequirements)
             .Include(p => p.Screenshots)
             .FirstOrDefaultAsync();
+    }
+
+    public void RemoveFromQuantity(Product product, uint toRemove)
+    {
+        if (product.Units <= 0)
+        {
+            throw new Exception("The product is already unavailable");
+        }
+
+        product.Units -= (int)toRemove;
+        _productDao.Update(product);
+    }
+
+    public void AddToQuantityMany(List<Product> products, uint toAdd)
+    {
+        if (products.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var product in products)
+        {
+            AddToQuantity(product, toAdd);
+        }
+    }
+
+    public void AddToQuantity(Product product, uint toAdd)
+    {
+        product.Units += (int) toAdd;
+        _productDao.Update(product);
     }
 }
