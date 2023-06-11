@@ -12,5 +12,6 @@ public static class DIIntializer
         builder.Services.AddScoped<IGenreService, GenreService>();
         builder.Services.AddScoped<ICategoryService, CategoryService>();
         builder.Services.AddScoped<IDeveloperService, DeveloperService>();
+        builder.Services.AddScoped<IOrderService, OrderService>();
     }
 }

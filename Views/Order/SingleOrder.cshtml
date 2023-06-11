@@ -20,6 +20,7 @@
   <hr/>
   <h4> @Constants.Messages["Price_Text"] @Constants.Messages["Money_Symbol"]@Model.FinalPrice </h4>
   <form asp-controller="Order" asp-action="CreateSingleOrder">
+    <input type="hidden"/>
     <button class="btn btn-primary" type="submit">@Constants.Messages["Place_Order_Text"]</button>
   </form>
 </div>
