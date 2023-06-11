@@ -13,17 +13,20 @@ public class OrderService : IOrderService
     private readonly ICategoryService _categoryService;
     private readonly IAuthenticationService _authenticationService;
     private readonly IMailService _mailService;
+    public IConfigurationService _configurationService { get; set; }
 
     private readonly DbSet<Order> _dao;
     private readonly ApplicationDbContext _dbContext;
 
     public OrderService(IProductService productService, ICategoryService categoryService, 
-        IAuthenticationService authenticationService, IMailService mailService, ApplicationDbContext context)
+        IAuthenticationService authenticationService, IMailService mailService,
+        IConfigurationService configuration, ApplicationDbContext context)
     {
         _productService = productService;
         _categoryService = categoryService;
         _authenticationService = authenticationService;
         _mailService = mailService;
+        _configurationService = configuration;
         
         _dbContext = context;
         _dao = context.Orders;
@@ -72,6 +75,22 @@ public class OrderService : IOrderService
         mail.Body = "Successfully placed order " + orderId;
         mail.Recepient = _authenticationService.GetCurrentUser().Name;
         mail.Subject = "Successful Order !";
+
+        await _mailService.SendEmail(mail);
+    }
+
+    /**
+     * This will send an email to the shop's owner, stating that there is a new order.
+     * The shop owner will decide if they want to accept or reject the order, through links.
+     */
+    private async Task SendRejectAcceptEmail(string orderId)
+    {
+        var acceptLink = $"<a href='{Constants.Constants.DOMAIN}/order/accept/{orderId}'> Accept Order </a>";
+        var rejectLink = $"<a href='{Constants.Constants.DOMAIN}/order/reject/{orderId}'> Reject Order </a>";
+
+        var mailBody = $"<div> {acceptLink} | {rejectLink} </div>";
+
+        var mail = new Mail {Subject = "New Order !", Body = mailBody, Recepient = _configurationService.GetShopEmail()};
 
         await _mailService.SendEmail(mail);
     }

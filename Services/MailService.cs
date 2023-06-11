@@ -10,9 +10,9 @@ public class MailService : IMailService
     private readonly MailConfiguration _configuration;
     private readonly HttpClient _httpClient;
 
-    public MailService(IOptions<MailConfiguration> configuration)
+    public MailService(IConfigurationService configuration)
     {
-        _configuration = configuration.Value;
+        _configuration = configuration.MailConfiguration();
 
         _httpClient = new HttpClient();
         _httpClient.DefaultRequestHeaders.Add("api-key", _configuration.ApiKey);

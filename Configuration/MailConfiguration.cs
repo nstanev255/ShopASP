@@ -6,4 +6,6 @@ public class MailConfiguration
     public string Url { get; set; }
     public string Name { get; set; }
     public string Email { get; set; }
+
+    public string ShopEmail { get; set; }
 }
