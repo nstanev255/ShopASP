@@ -7,4 +7,7 @@ public class SingleOrderViewModel
     public BasicProduct Product { get; set; }
     public CategoryType CategoryType { get; set; }
     public decimal FinalPrice { get; set; }
+
+    public SingleOrderInputModel InputModel { get; set; }
+
 }

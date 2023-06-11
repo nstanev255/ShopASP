@@ -12,20 +12,31 @@ public class OrderController : Controller
     private ILogger<OrderController> _logger;
     private IProductService _productService;
     private ICategoryService _categoryService;
-    public OrderController(ILogger<OrderController> logger, IProductService productService, ICategoryService categoryService)
+    private IOrderService _orderService;
+    public OrderController(ILogger<OrderController> logger, IProductService productService, ICategoryService categoryService,
+        IOrderService orderService)
     {
         _logger = logger;
         _productService = productService;
         _categoryService = categoryService;
-
-
+        _orderService = orderService;
     }
 
     [HttpPost]
+    [Authorize]
     [Route("single-order-create")]
-    public async Task<IActionResult> CreateSingleOrder()
+    public async Task<IActionResult> CreateSingleOrder(SingleOrderInputModel inputModel)
     {
-        return NotFound();
+        try
+        {
+            await _orderService.PlaceSingleOrder(inputModel);
+            return View("SuccessfulOrder");
+        }
+        catch (Exception exception)
+        {
+            //TODO: Show here a failed place order view.
+            return NotFound();
+        }
     }
 
     /**
@@ -50,9 +61,12 @@ public class OrderController : Controller
             return NotFound();
         }
 
-        var basicProduct = new BasicProduct { Id = product.Id, Name = product.Name, Price = product.Price, Image = product.FrontCover.Url };
-        var model = new SingleOrderViewModel { Product = basicProduct, CategoryType = category.Type, FinalPrice = product.Price};
+        var productPrices = Utils.PriceUtils.ProductPrices(new List<Product> { product });
 
+        var basicProduct = new BasicProduct { Id = product.Id, Name = product.Name, Price = product.Price, Image = product.FrontCover.Url };
+        var model = new SingleOrderViewModel { Product = basicProduct, CategoryType = category.Type, 
+            FinalPrice = Utils.PriceUtils.CalculateFinalPrice(productPrices), InputModel = new SingleOrderInputModel()};
+        
         return View(model);
     }
 }

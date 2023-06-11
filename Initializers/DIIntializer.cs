@@ -13,5 +13,6 @@ public static class DIIntializer
         builder.Services.AddScoped<ICategoryService, CategoryService>();
         builder.Services.AddScoped<IDeveloperService, DeveloperService>();
         builder.Services.AddScoped<IOrderService, OrderService>();
+        builder.Services.AddHttpContextAccessor();
     }
 }

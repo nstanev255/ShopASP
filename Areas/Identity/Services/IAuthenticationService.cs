@@ -1,3 +1,4 @@
+using System.Security.Principal;
 using Microsoft.AspNetCore.Identity;
 using ShopASP.Areas.Identity.Models;
 
@@ -20,5 +21,7 @@ public interface IAuthenticationService
     public Task LoginUser(LoginInput loginInput);
 
     public Task LogoutUser();
+
+    public IIdentity GetCurrentUser();
 
 }
