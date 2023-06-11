@@ -10,17 +10,16 @@
     <table class="table table-stripped table-hover">
         <thead>
         <tr>
-            <th scope="col">Id</th>
+            <th scope="col">UUID</th>
             <th scope="col">Products</th>
             <th scope="col">Status</th>
-            <th scope="col">View</th>
         </tr>
         </thead>
         <tbody>
         @foreach (var order in @Model.Orders)
         {
             <tr>
-                <th>@order.Id</th>
+                <th>@order.UUID</th>
                 <td>
                     @foreach (var orderProduct in @order.Products)
                     {
@@ -28,9 +27,6 @@
                     }
                 </td>
                 <td>@order.Status</td>
-                <td>
-                    <button class="btn btn-primary">View</button>
-                </td>
             </tr>
         }
         </tbody>
