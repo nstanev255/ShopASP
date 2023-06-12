@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShopASP.Areas.Identity.Models;
+using ShopASP.Areas.Identity.Services;
 using ShopASP.Services;
 
 namespace ShopASP.Areas.Identity.Controllers;
@@ -10,10 +11,12 @@ namespace ShopASP.Areas.Identity.Controllers;
 public class ProfileController : Controller
 {
     private readonly IOrderService _orderService;
+    private readonly IAuthenticationService _authentication;
 
-    public ProfileController(IOrderService orderService)
+    public ProfileController(IOrderService orderService, IAuthenticationService authenticationService)
     {
         _orderService = orderService;
+        _authentication = authenticationService;
     }
 
     [Authorize]
@@ -24,11 +27,13 @@ public class ProfileController : Controller
         {
             page = 1;
         }
-
-        var orders = _orderService.FindAllPaginate(page);
-        var allOrders = _orderService.CountAll();
+        
+        var user = _authentication.FindUserByUsername(User.Identity.Name);
+        
+        var allOrders = _orderService.CountAllByUserId(user.Id);
         var allPages = Utils.PaginationUtils.CalculatePageNumber(allOrders);
 
+        var orders = _orderService.FindAllPaginateByUser(page, user.Id);
         var model = new AccountOrdersViewModel { AllPages = allPages, Orders = orders, CurrentPage = page };
 
         return View("Profile", model);

@@ -5,33 +5,39 @@
 @{
     Layout = "_ProfilePageLayout";
 }
-
-<div class="container">
-    <table class="table table-stripped table-hover">
-        <thead>
-        <tr>
-            <th scope="col">UUID</th>
-            <th scope="col">Products</th>
-            <th scope="col">Status</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var order in @Model.Orders)
-        {
+@if (@Model.Orders.Count > 0)
+{
+    <div class="container">
+        <table class="table table-stripped table-hover">
+            <thead>
             <tr>
-                <th>@order.UUID</th>
-                <td>
-                    @foreach (var orderProduct in @order.Products)
-                    {
-                        <p>@orderProduct.Product.Name</p>
-                    }
-                </td>
-                <td>@order.Status</td>
+                <th scope="col">UUID</th>
+                <th scope="col">Products</th>
+                <th scope="col">Status</th>
             </tr>
-        }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            @foreach (var order in @Model.Orders)
+            {
+                <tr>
+                    <th>@order.UUID</th>
+                    <td>
+                        @foreach (var orderProduct in @order.Products)
+                        {
+                            <p>@orderProduct.Product.Name</p>
+                        }
+                    </td>
+                    <td>@order.Status</td>
+                </tr>
+            }
+            </tbody>
+        </table>
     
-    @Html.Partial("Partial/_Pagination", new PaginationModel { CurrentPage = @Model.CurrentPage, AllPages = @Model.AllPages, Action = "ProfilePage", Controller = "Profile"})
+        @Html.Partial("Partial/_Pagination", new PaginationModel { CurrentPage = @Model.CurrentPage, AllPages = @Model.AllPages, Action = "ProfilePage", Controller = "Profile"})
 
-</div>
+    </div>
+}
+else
+{
+    <h2>No orders yet.</h2>
+}

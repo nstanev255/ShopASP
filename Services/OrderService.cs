@@ -231,6 +231,20 @@ public class OrderService : IOrderService
         return _dao.Count();
     }
 
+    public int CountAllByUserId(string userId)
+    {
+        return _dao.Count(o => o.User.Id == userId);
+    }
+
+    public List<Order> FindAllPaginateByUser(int page, string userId)
+    {
+        var offset = PaginationUtils.CalculateOffset(page);
+
+        return _dao.Where(o => o.User.Id == userId)
+            .Include(o => o.Products).ThenInclude(p => p.Product).Skip(offset)
+            .Take(Constants.Constants.ItemsPerPage).ToList();
+    }
+
     public List<Order> FindAllPaginate(int page)
     {
         var offset = PaginationUtils.CalculateOffset(page);
