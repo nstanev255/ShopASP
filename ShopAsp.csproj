@@ -25,4 +25,9 @@
       <_ContentIncludedByDefault Remove="Partial\_CartPartial.cshtml" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Areas\Cms\Models\" />
+      <Folder Include="Areas\Cms\Services\" />
+    </ItemGroup>
+
 </Project>
